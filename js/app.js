@@ -20,7 +20,44 @@ window.app = {
         this.bindEvents();
         this.switchRole('teacher');
         this.loadProfile(this.activeProfileKey);
+        this.syncWithDatabase();
     },
+
+    syncWithDatabase: async function() {
+        try {
+            // Fetch published notes from DB
+            const resNotes = await fetch('/api/notes');
+            const dataNotes = await resNotes.json();
+            if (dataNotes.success && dataNotes.notes && dataNotes.notes.length > 0) {
+                const dbNotes = dataNotes.notes.map(n => ({
+                    id: n.id,
+                    title: n.title,
+                    subject: n.subject || 'General',
+                    date: new Date(n.created_at).toLocaleDateString() + ', ' + new Date(n.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                    author: n.teacher_name || 'Prof. Anderson',
+                    content: n.content || '',
+                    file_name: n.file_name,
+                    fileAttachment: n.file_name || '',
+                    note_type: n.note_type || 'composed',
+                    status: n.is_published ? 'Published' : 'Draft'
+                }));
+                MINDGAP_DATA.teacherNotes = dbNotes;
+                if (window.TeacherDashboardController) window.TeacherDashboardController.renderTeacherNotes();
+                if (window.StudentPortalController) window.StudentPortalController.renderStudentNotes();
+            }
+
+            // Fetch active announcement from DB
+            const resAnn = await fetch('/api/announcements/active');
+            const dataAnn = await resAnn.json();
+            if (dataAnn.success && dataAnn.announcement) {
+                MINDGAP_DATA.commonTeacherFeedback = dataAnn.announcement.message;
+                if (window.StudentPortalController) window.StudentPortalController.renderCommonFeedback();
+            }
+        } catch(e) {
+            console.warn('DB Sync fallback (running offline mode)');
+        }
+    },
+
 
     bindEvents: function() {
         // Universal Nav Tab Switching (using closest for reliable inner click handling)

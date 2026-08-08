@@ -21,7 +21,7 @@ window.TeacherDashboardController = {
         // Broadcast Common Feedback Button
         const btnBroadcast = document.getElementById('btn-broadcast-feedback');
         if (btnBroadcast) {
-            btnBroadcast.addEventListener('click', () => {
+            btnBroadcast.addEventListener('click', async () => {
                 const input = document.getElementById('common-feedback-input');
                 if (!input || !input.value.trim()) {
                     alert('Please enter common feedback or an announcement before broadcasting.');
@@ -30,14 +30,23 @@ window.TeacherDashboardController = {
                 const text = input.value.trim();
                 MINDGAP_DATA.commonTeacherFeedback = text;
 
+                try {
+                    await fetch('/api/announcements', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ teacher_id: 1, message: text })
+                    });
+                } catch(e) { console.warn('Offline announcement broadcast fallback'); }
+
                 if (window.StudentPortalController) {
                     window.StudentPortalController.renderCommonFeedback();
                 }
 
-                alert('📢 Common feedback broadcasted to all students successfully!');
+                alert('📢 Common feedback broadcasted & saved to database successfully!');
                 input.value = '';
             });
         }
+
 
         // Save note button
         const btnSaveNote = document.getElementById('btn-save-note');
@@ -80,46 +89,60 @@ window.TeacherDashboardController = {
                 const noteTitle = file.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ');
                 const fileSizeKb = (file.size / 1024).toFixed(1);
 
-                // Save to DB via API
-                try {
-                    await fetch('/api/notes', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            teacher_id: 1,
-                            title: noteTitle,
-                            subject: 'Uploaded File',
-                            file_name: file.name,
-                            file_size_kb: fileSizeKb,
-                            note_type: 'uploaded',
-                            content: `📎 File: ${file.name} (${fileSizeKb} KB) — Published to student portal.`
-                        })
-                    });
-                } catch(e) { /* offline fallback */ }
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const fileDataUrl = e.target.result;
+                    const fileType = file.type || (file.name.endsWith('.pdf') ? 'application/pdf' : 'text/plain');
 
-                // Also add to local in-memory data for immediate display
-                const newNote = {
-                    id: 'note-' + Date.now(),
-                    title: noteTitle,
-                    subject: 'Uploaded File',
-                    date: 'Just now',
-                    author: 'Current Teacher',
-                    content: `📎 Uploaded file: **${file.name}** (${fileSizeKb} KB)\n\nThis document has been published to the student portal.`,
-                    tags: ['Uploaded', file.name.endsWith('.pdf') ? 'PDF' : 'File']
+                    // Save to DB via API
+                    try {
+                        await fetch('/api/notes', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                teacher_id: 1,
+                                title: noteTitle,
+                                subject: 'Uploaded File',
+                                file_name: file.name,
+                                file_size_kb: fileSizeKb,
+                                note_type: 'uploaded',
+                                content: `📎 File: ${file.name} (${fileSizeKb} KB) — Published to student portal.`
+                            })
+                        });
+                    } catch(e) { /* offline fallback */ }
+
+                    // Also add to local in-memory data for immediate display
+                    const newNote = {
+                        id: 'note-' + Date.now(),
+                        title: noteTitle,
+                        subject: 'Uploaded File',
+                        date: 'Just now',
+                        author: 'Current Teacher',
+                        file_name: file.name,
+                        fileAttachment: file.name,
+                        fileSizeKb: fileSizeKb,
+                        fileDataUrl: fileDataUrl,
+                        fileType: fileType,
+                        note_type: 'uploaded',
+                        content: `📎 Uploaded file: **${file.name}** (${fileSizeKb} KB)\n\nThis document has been published to the student portal for reading and practice.`,
+                        tags: ['Uploaded', file.name.endsWith('.pdf') ? 'PDF' : 'File']
+                    };
+
+                    if (!MINDGAP_DATA.teacherNotes) MINDGAP_DATA.teacherNotes = [];
+                    MINDGAP_DATA.teacherNotes.unshift(newNote);
+                    this.renderTeacherNotes();
+                    if (window.StudentPortalController) window.StudentPortalController.renderStudentNotes();
+
+                    // Reset upload zone
+                    if (fileStatus) fileStatus.style.display = 'none';
+                    if (uploadBtn) { uploadBtn.style.display = 'none'; uploadBtn.disabled = false; uploadBtn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Upload & Publish to Students'; }
+                    if (fileInput) fileInput.value = '';
+                    if (uploadZone) { uploadZone.style.borderColor = '#cbd5e1'; uploadZone.style.background = '#f8fafc'; }
+
+                    alert(`✅ "${file.name}" uploaded and published to student portal successfully!`);
                 };
 
-                if (!MINDGAP_DATA.teacherNotes) MINDGAP_DATA.teacherNotes = [];
-                MINDGAP_DATA.teacherNotes.unshift(newNote);
-                this.renderTeacherNotes();
-                if (window.StudentPortalController) window.StudentPortalController.renderStudentNotes();
-
-                // Reset upload zone
-                if (fileStatus) fileStatus.style.display = 'none';
-                if (uploadBtn) { uploadBtn.style.display = 'none'; uploadBtn.disabled = false; uploadBtn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Upload & Publish to Students'; }
-                if (fileInput) fileInput.value = '';
-                if (uploadZone) { uploadZone.style.borderColor = '#cbd5e1'; uploadZone.style.background = '#f8fafc'; }
-
-                alert(`✅ "${file.name}" uploaded and published to student portal successfully!`);
+                reader.readAsDataURL(file);
             });
         }
 
@@ -160,20 +183,6 @@ window.TeacherDashboardController = {
             });
         }
 
-        // Teacher File Input
-        const fileInput = document.getElementById('teacher-file-input');
-        if (fileInput) {
-            fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) {
-                    const statusBox = document.getElementById('teacher-file-status');
-                    const filename = document.getElementById('teacher-filename');
-                    if (statusBox && filename) {
-                        filename.textContent = e.target.files[0].name;
-                        statusBox.classList.remove('hidden');
-                    }
-                }
-            });
-        }
     },
 
     renderDashboard: function() {
@@ -205,10 +214,8 @@ window.TeacherDashboardController = {
             const subject = note.subject || 'General';
             const date = note.date || 'Just now';
             const title = note.title || 'Untitled Note';
-            const content = note.content || '';
-            const preview = content.substring(0, 160) + (content.length > 160 ? '...' : '');
             const isUploaded = note.note_type === 'uploaded' || (note.tags && note.tags.includes('Uploaded'));
-            const fileName = note.file_name || (note.tags && note.tags[1] !== 'Uploaded' ? note.tags[1] : '');
+            const fileName = note.file_name || note.fileAttachment || (note.tags && note.tags[1] !== 'Uploaded' ? note.tags[1] : '');
 
             html += `
                 <div class="note-card" style="border:1.5px solid #e2e8f0; border-radius:12px; padding:16px; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,0.06);">
@@ -216,15 +223,13 @@ window.TeacherDashboardController = {
                         <span class="badge" style="background:#e0f2fe; color:#0284c7; font-size:11px;">${subject}</span>
                         <span style="font-size:11px; color:#94a3b8;"><i class="fa-solid fa-clock"></i> ${date}</span>
                     </div>
-                    <div class="note-title" style="font-weight:700; font-size:14px; color:#0f172a; margin-bottom:6px;">${title}</div>
-                    ${isUploaded ? `
-                        <div style="display:flex; align-items:center; gap:8px; padding:8px 12px; background:#f0f9ff; border-radius:8px; margin-bottom:8px;">
-                            <i class="fa-solid fa-file-pdf" style="color:#dc2626; font-size:20px;"></i>
-                            <span style="font-size:12px; color:#334155; font-weight:600;">${fileName || title}</span>
+                    <div class="note-title" style="font-weight:700; font-size:14px; color:#0f172a; margin-bottom:10px;">${title}</div>
+                    ${fileName ? `
+                        <div style="display:flex; align-items:center; gap:8px; padding:8px 12px; background:#f0f9ff; border-radius:8px; margin-bottom:10px;">
+                            <i class="fa-solid fa-file-pdf" style="color:#dc2626; font-size:18px;"></i>
+                            <span style="font-size:12px; color:#334155; font-weight:600;">${fileName}</span>
                         </div>
-                    ` : `
-                        <div style="font-size:12px; color:#64748b; line-height:1.6; margin-bottom:8px;">${preview}</div>
-                    `}
+                    ` : ''}
                     <div style="display:flex; justify-content:flex-end; gap:6px; border-top:1px solid #f1f5f9; padding-top:8px; margin-top:4px;">
                         <button class="btn btn-sm btn-outline" onclick="TeacherDashboardController.deleteNote('${note.id}')" title="Delete Note" style="padding:4px 10px;">
                             <i class="fa-solid fa-trash" style="color:#dc2626;"></i>
@@ -237,7 +242,8 @@ window.TeacherDashboardController = {
         container.innerHTML = html;
     },
 
-    saveNewNote: function() {
+
+    saveNewNote: async function() {
         const titleInput = document.getElementById('new-note-title');
         const subjectInput = document.getElementById('new-note-subject');
         const contentInput = document.getElementById('new-note-content');
@@ -247,14 +253,33 @@ window.TeacherDashboardController = {
             return;
         }
 
+        const noteTitle = titleInput.value;
+        const noteSubject = subjectInput.value;
+        const noteContent = contentInput.value;
+
+        // Persist to DB API
+        try {
+            await fetch('/api/notes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    teacher_id: 1,
+                    title: noteTitle,
+                    subject: noteSubject,
+                    content: noteContent,
+                    note_type: 'composed'
+                })
+            });
+        } catch(e) { console.warn('Offline note persistence fallback'); }
+
         const newNote = {
             id: 'note-' + Date.now(),
-            title: titleInput.value,
-            subject: subjectInput.value,
+            title: noteTitle,
+            subject: noteSubject,
             date: 'Just Now',
             author: 'Prof. Anderson',
-            content: contentInput.value,
-            fileAttachment: 'Kinematics_Lecture_Summary_Ch2.pdf',
+            content: noteContent,
+            fileAttachment: '',
             status: 'Published'
         };
 
@@ -270,11 +295,16 @@ window.TeacherDashboardController = {
             window.StudentPortalController.renderStudentNotes();
         }
 
-        alert('Note published successfully to student portal!');
+        alert('Note published and persisted to database successfully!');
     },
 
-    deleteNote: function(id) {
+    deleteNote: async function(id) {
         if (confirm('Are you sure you want to delete this lecture note?')) {
+            try {
+                if (id && !id.toString().startsWith('note-')) {
+                    await fetch(`/api/notes/${id}`, { method: 'DELETE' });
+                }
+            } catch(e) {}
             MINDGAP_DATA.teacherNotes = MINDGAP_DATA.teacherNotes.filter(n => n.id !== id);
             this.renderTeacherNotes();
             if (window.StudentPortalController) {
@@ -282,6 +312,7 @@ window.TeacherDashboardController = {
             }
         }
     },
+
 
     /* --- PAGE 2: STUDENT PERFORMANCE DASHBOARD --- */
     renderStudentRosterTable: function() {

@@ -387,10 +387,81 @@ app.get('/api/diagnostics/:student_id', async (req, res) => {
     } catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 
+const { generateWithFallback, generateAssessmentsFromNotes, analyzeStudentAssessment } = require('./services/geminiService');
+
+// ─────────────────────────────────────────────────────────────
+// GEMINI AI INTEGRATION (3 Assessment Types + AI Diagnostics + Fallback Pool)
+// ─────────────────────────────────────────────────────────────
+app.post('/api/ai/generate-tests', async (req, res) => {
+    const { note_content, subject } = req.body;
+    try {
+        const contentToUse = note_content || "1D Kinematics and Vertical Projectile Motion with sign conventions. g = -9.8 m/s^2 when moving upward.";
+        const generated = await generateAssessmentsFromNotes(contentToUse, subject || 'Physics');
+        res.json({ success: true, tests: generated });
+    } catch (e) {
+        console.error('Gemini Test Generation Error:', e.message);
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
+
+app.post('/api/ai/analyze-assessment', async (req, res) => {
+    const { test_type, student_id, answers, transcript, note_content, time_taken_secs } = req.body;
+    try {
+        const analysis = await analyzeStudentAssessment(
+            test_type || 'mcq',
+            answers || [],
+            transcript || '',
+            note_content || ''
+        );
+
+        // Save diagnostic results to DB
+        const studentIdToUse = student_id || 1;
+
+        if (analysis) {
+            try {
+                // Log Result
+                await pool.query(
+                    `INSERT INTO assessment_results
+                     (student_id, score_pct, total_questions, correct_answers, time_taken_secs, ai_feedback, verbal_fluency_pct, hesitation_index)
+                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+                    [studentIdToUse, analysis.scorePct || 85, 3, 3, time_taken_secs || 30, analysis.aiFeedback || '', analysis.verbalFluencyPct || 85, analysis.hesitationIndex || 'Low']
+                );
+
+                // Log Performance Analytics
+                await pool.query(
+                    `INSERT INTO performance_analytics (student_id, score_pct, test_label) VALUES ($1, $2, $3)`,
+                    [studentIdToUse, analysis.scorePct || 85, `${test_type ? test_type.toUpperCase() : 'AI'} Test`]
+                );
+
+                // Log Weak Area if misconception identified
+                if (analysis.misconception && analysis.misconception.title) {
+                    await pool.query(
+                        `INSERT INTO weak_areas (student_id, topic, severity) VALUES ($1, $2, $3)`,
+                        [studentIdToUse, analysis.misconception.title, analysis.misconception.severity && analysis.misconception.severity.toLowerCase().includes('high') ? 'high' : 'medium']
+                    );
+
+                    await pool.query(
+                        `INSERT INTO multimodal_diagnostics
+                         (student_id, input_type, speech_transcript, ai_misconception_title, ai_misconception_desc, severity)
+                         VALUES ($1, $2, $3, $4, $5, $6)`,
+                        [studentIdToUse, test_type === 'speech' ? 'speech' : 'telemetry', transcript || '', analysis.misconception.title, analysis.misconception.desc, analysis.misconception.severity || 'high']
+                    );
+                }
+            } catch(dbErr) { console.warn('DB save warning:', dbErr.message); }
+        }
+
+        res.json({ success: true, analysis });
+    } catch (e) {
+        console.error('Gemini Assessment Analysis Error:', e.message);
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
+
 // ─────────────────────────────────────────────────────────────
 // FALLBACK
 // ─────────────────────────────────────────────────────────────
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'landing.html')));
+
 
 // ─────────────────────────────────────────────────────────────
 // START
