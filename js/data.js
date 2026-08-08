@@ -259,6 +259,7 @@ window.MINDGAP_DATA = {
                 ]
             }
         }
+    },
     // Teacher Uploaded Notes & Content Library
     teacherNotes: [
         {
