@@ -18,24 +18,24 @@ window.GapGraphController = {
 
         // Transform nodes into Vis.js format with custom colors & shapes
         const visNodes = graphNodes.map(node => {
-            let color = '#334155';
+            let color = '#64748b';
             let borderWidth = 2;
-            let fontColor = '#f1f5f9';
+            let fontColor = '#0f172a';
             let shape = 'dot';
             let size = 25;
 
             if (node.status === 'mastered') {
-                color = '#06d6a0';
+                color = '#059669';
             } else if (node.status === 'gap-root') {
-                color = '#ff0055';
+                color = '#dc2626';
                 size = 36;
                 borderWidth = 4;
                 shape = 'diamond';
             } else if (node.status === 'gap-dependent') {
-                color = '#ffb703';
+                color = '#d97706';
                 size = 28;
             } else if (node.status === 'locked') {
-                color = '#1e293b';
+                color = '#cbd5e1';
                 fontColor = '#64748b';
             }
 
@@ -45,13 +45,13 @@ window.GapGraphController = {
                 color: {
                     background: color,
                     border: '#ffffff',
-                    highlight: { background: color, border: '#00f0ff' }
+                    highlight: { background: color, border: '#0284c7' }
                 },
-                font: { color: fontColor, face: 'Outfit', size: 14 },
+                font: { color: fontColor, face: 'Outfit', size: 14, strokeWidth: 2, strokeColor: '#ffffff' },
                 shape: shape,
                 size: size,
                 borderWidth: borderWidth,
-                shadow: node.status === 'gap-root' ? { enabled: true, color: 'rgba(255, 0, 85, 0.6)', size: 20 } : false
+                shadow: node.status === 'gap-root' ? { enabled: true, color: 'rgba(220, 38, 38, 0.3)', size: 16 } : false
             };
         });
 
@@ -60,7 +60,7 @@ window.GapGraphController = {
             from: edge.from,
             to: edge.to,
             arrows: 'to',
-            color: { color: 'rgba(255, 255, 255, 0.2)', highlight: '#00f0ff' },
+            color: { color: '#cbd5e1', highlight: '#0284c7' },
             width: 2,
             smooth: { type: 'cubicBezier' }
         }));
