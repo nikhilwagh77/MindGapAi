@@ -64,11 +64,17 @@ window.app = {
     switchRole: function(role) {
         this.activeRole = role;
 
+        const teacherNavs = document.querySelectorAll('.role-section-teacher');
+        const studentNavs = document.querySelectorAll('.role-section-student');
+
         const btnRoleTeacher = document.getElementById('btn-role-teacher');
         const btnRoleStudent = document.getElementById('btn-role-student');
         const roleBadge = document.getElementById('header-role-badge');
 
         if (role === 'teacher') {
+            teacherNavs.forEach(el => el.classList.remove('hidden'));
+            studentNavs.forEach(el => el.classList.add('hidden'));
+
             if (btnRoleTeacher) btnRoleTeacher.classList.add('active');
             if (btnRoleStudent) btnRoleStudent.classList.remove('active');
             if (roleBadge) {
@@ -77,6 +83,9 @@ window.app = {
             }
             this.switchTab('teacher-notes');
         } else {
+            teacherNavs.forEach(el => el.classList.add('hidden'));
+            studentNavs.forEach(el => el.classList.remove('hidden'));
+
             if (btnRoleStudent) btnRoleStudent.classList.add('active');
             if (btnRoleTeacher) btnRoleTeacher.classList.remove('active');
             if (roleBadge) {
