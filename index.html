@@ -90,16 +90,21 @@
 
 
             <!-- COMMON FEEDBACK TO STUDENTS WIDGET FOR TEACHERS -->
-            <div class="common-feedback-widget role-section-teacher">
-                <div class="selector-header" style="display:flex; align-items:center; gap:8px; font-size:12px; color:#64748b; font-weight:700; text-transform:uppercase;">
-                    <i class="fa-solid fa-bullhorn" style="color:#0284c7;"></i>
-                    <span>Give Common Feedback</span>
+            <div class="role-section-teacher" style="margin-top: 8px;">
+                <div style="border-top: 2px solid #e2e8f0; margin: 8px 0 12px 0;"></div>
+                <div class="nav-section-label" style="color:#0284c7; margin-bottom:10px;">
+                    <i class="fa-solid fa-bullhorn"></i> CLASS BROADCAST
                 </div>
-                <textarea id="common-feedback-input" class="editor-textarea" style="min-height:70px; font-size:12px; margin-top:8px;" placeholder="Write common feedback or announcement for all students..."></textarea>
-                <button class="btn btn-sm btn-primary margin-top" id="btn-broadcast-feedback" style="width:100%; justify-content:center;">
-                    <i class="fa-solid fa-paper-plane"></i> Broadcast Feedback
-                </button>
+                <div style="background:#f0f9ff; border:1.5px solid #bae6fd; border-radius:12px; padding:12px;">
+                    <p style="font-size:11px; color:#64748b; margin-bottom:8px; font-weight:600;">Write an announcement visible to all students:</p>
+                    <textarea id="common-feedback-input" class="editor-textarea" style="min-height:75px; font-size:12px; border-radius:8px;" placeholder="e.g. Revise Newton's 3rd Law before Friday's test..."></textarea>
+                    <button class="btn btn-sm btn-primary" id="btn-broadcast-feedback" style="width:100%; justify-content:center; margin-top:8px;">
+                        <i class="fa-solid fa-paper-plane"></i> Broadcast to All Students
+                    </button>
+                </div>
             </div>
+
+
 
             <div class="sidebar-footer">
                 <div class="api-status" id="api-status">
