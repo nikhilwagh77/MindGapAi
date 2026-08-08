@@ -189,27 +189,13 @@ window.app = {
         this.activeProfileKey = profileKey;
         if (!window.MINDGAP_DATA) return;
 
-        const profile = (MINDGAP_DATA.profiles && MINDGAP_DATA.profiles[profileKey]) || 
+        const profile = (MINDGAP_DATA.profiles && MINDGAP_DATA.profiles[profileKey]) ||
                         (MINDGAP_DATA.studentRoster && MINDGAP_DATA.studentRoster.find(s => s.id === profileKey));
 
         const tag = document.getElementById('subject-tag');
         if (tag && profile) {
             tag.textContent = profile.subject || profile.name;
         }
-
-        // Open detailed Student Profile Modal when a student context is selected
-        try {
-            if (window.TeacherDashboardController && profileKey) {
-                TeacherDashboardController.openStudentProfileModal(profileKey);
-            }
-        } catch(e) {}
-
-        // Refresh Multimodal Diagnostics if function available
-        try {
-            if (window.MultimodalController && MultimodalController.loadProfileData) {
-                MultimodalController.loadProfileData(profileKey);
-            }
-        } catch(e) {}
 
         try {
             if (this.activeTab === 'knowledge-graph' && window.GapGraphController && profile && profile.graphNodes) {
