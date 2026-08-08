@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindGap AI - Multimodal Student Learning Gap & Remediation Engine</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+    <link rel="shortcut icon" href="favicon.ico">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Vis.js Network for Knowledge Graphs -->
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <!-- Chart.js for Teacher Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark-theme">
+    <!-- App Container -->
+    <div id="app" class="app-container">
+        
+        <!-- Sidebar / Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo-icon">
+                    <img src="assets/logo.png" alt="MindGap Logo" class="brand-logo-img">
+                </div>
+                <div class="brand-text">
+                    <h2>MindGap <span class="badge-ai">AI</span></h2>
+                    <span class="subtext">Team CodeSmiths</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-item active" data-tab="diagnostic">
+                    <i class="fa-solid fa-microscope"></i>
+                    <span>Multimodal Diagnostic</span>
+                </button>
+                <button class="nav-item" data-tab="knowledge-graph">
+                    <i class="fa-solid fa-diagram-project"></i>
+                    <span>Cognitive Gap Graph</span>
+                </button>
+                <button class="nav-item" data-tab="nuggets">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <span>Century AI Nuggets</span>
+                    <span class="badge-count" id="nugget-count">3</span>
+                </button>
+                <button class="nav-item" data-tab="interventions">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>AI Interventions</span>
+                </button>
+                <button class="nav-item" data-tab="teacher-dashboard">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <span>Teacher Heatmap</span>
+                </button>
+            </nav>
+
+            <div class="student-profile-selector">
+                <div class="selector-header">
+                    <i class="fa-solid fa-user-graduate"></i>
+                    <span>Active Student Profile</span>
+                </div>
+                <select id="profile-select" class="custom-select">
+                    <option value="alex">Alex Chen (Physics - Kinematics Gap)</option>
+                    <option value="priya">Priya Sharma (Math - Calculus Gap)</option>
+                    <option value="jordan">Jordan Lee (CS - Recursion Gap)</option>
+                    <option value="custom">+ Live Custom Assessment</option>
+                </select>
+                <div class="subject-tag" id="subject-tag">Physics: Kinematics</div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="api-status" id="api-status">
+                    <span class="status-dot online"></span>
+                    <span class="status-text">Gemini Multimodal: Ready</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- Top Navbar -->
+            <header class="top-header">
+                <div class="header-left">
+                    <h1 id="page-title">Multimodal Assessment & Diagnostics</h1>
+                    <p id="page-subtitle" class="text-muted">Analyze handwriting, voice explainers, and behavioral telemetry to detect hidden gaps</p>
+                </div>
+                <div class="header-right">
+                    <div class="telemetry-badge">
+                        <i class="fa-solid fa-stopwatch"></i>
+                        <span>Hesitation Index: <strong id="telemetry-score">Low (1.2s)</strong></span>
+                    </div>
+                    <button class="btn btn-secondary" id="btn-reset-demo">
+                        <i class="fa-solid fa-rotate-left"></i> Reset Demo
+                    </button>
+                    <button class="btn btn-primary" id="btn-quick-scan">
+                        <i class="fa-solid fa-bolt"></i> Run AI Diagnosis
+                    </button>
+                </div>
+            </header>
+
+            <!-- TAB 1: MULTIMODAL DIAGNOSTIC -->
+            <section id="tab-diagnostic" class="tab-content active">
+                <div class="grid-layout grid-3">
+                    
+                    <!-- Channel 1: Scratchpad & Handwriting (Vision) -->
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fa-solid fa-pen-nib icon-cyan"></i>
+                                <h3>1. Visual Scratchpad & OCR</h3>
+                            </div>
+                            <span class="badge">Vision AI</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="upload-zone" id="upload-zone">
+                                <input type="file" id="image-input" accept="image/*" class="file-input">
+                                <div class="upload-placeholder" id="upload-placeholder">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    <p>Drag & drop handwritten notes or snap math solution</p>
+                                    <div class="btn-group-sm">
+                                        <button class="btn btn-sm btn-outline" onclick="document.getElementById('image-input').click()">
+                                            <i class="fa-solid fa-folder-open"></i> Upload Image
+                                        </button>
+                                        <button class="btn btn-sm btn-outline" id="btn-webcam">
+                                            <i class="fa-solid fa-camera"></i> Camera
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="preview-container hidden" id="preview-container">
+                                    <img id="image-preview" src="" alt="Scratchpad note">
+                                    <button class="btn-close" id="btn-clear-image"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                            
+                            <div class="ocr-extracted-box" id="ocr-extracted-box">
+                                <div class="box-label"><i class="fa-solid fa-magnifying-glass"></i> AI Detected Work Steps:</div>
+                                <div class="ocr-text" id="ocr-text">
+                                    v = u + at → 0 = 20 + (-9.8)t <br>
+                                    t = 20 / 9.8 = 2.04 s <br>
+                                    h = ut + 0.5at² → h = 20(2.04) + 9.8(2.04)² <span class="text-danger">&larr; [Sign Error]</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Channel 2: Voice Think-Aloud (Audio) -->
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fa-solid fa-microphone icon-purple"></i>
+                                <h3>2. Voice "Think-Aloud" Audio</h3>
+                            </div>
+                            <span class="badge badge-purple">Audio AI</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="audio-recorder-box">
+                                <div class="mic-visualizer" id="mic-visualizer">
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                </div>
+                                <div class="audio-controls">
+                                    <button class="btn btn-circle btn-danger" id="btn-record-audio">
+                                        <i class="fa-solid fa-microphone"></i>
+                                    </button>
+                                    <div class="record-status" id="record-status">Click to record student explaining solution...</div>
+                                </div>
+                                <audio id="audio-player" controls class="audio-player hidden"></audio>
+                            </div>
+
+                            <div class="transcript-box">
+                                <div class="box-label"><i class="fa-solid fa-quote-left"></i> Speech Transcript & Hesitation Analysis:</div>
+                                <p class="transcript-text" id="transcript-text">
+                                    "I calculated the time to max height okay... then I used the second kinematics formula. But wait... is gravity negative when calculating height or positive? I... I just added them together."
+                                </p>
+                                <div class="sentiment-bar">
+                                    <span class="label">Verbal Confidence:</span>
+                                    <div class="progress-bar"><div class="progress-fill warning" id="confidence-fill" style="width: 38%;">38% (High Hesitation)</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Channel 3: Behavioral Telemetry & Assessment -->
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fa-solid fa-chart-line icon-emerald"></i>
+                                <h3>3. Behavioral Telemetry</h3>
+                            </div>
+                            <span class="badge badge-emerald">Behavioral Data</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="telemetry-metrics">
+                                <div class="metric-item">
+                                    <span class="metric-label">Time Spent on Question:</span>
+                                    <span class="metric-val text-warning" id="metric-time">4m 12s (2.8x Avg)</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-label">Option Switch Count:</span>
+                                    <span class="metric-val text-danger" id="metric-switches">4 Revisions (A &rarr; C &rarr; B &rarr; D)</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-label">Self-Rated Confidence:</span>
+                                    <span class="metric-val" id="metric-confidence">2 / 5 (Uncertain)</span>
+                                </div>
+                            </div>
+
+                            <div class="question-preview">
+                                <div class="q-title">Current Problem:</div>
+                                <p class="q-text" id="q-text">A projectile is launched vertically upward at 20 m/s. Calculate the maximum height reached. (g = 9.8 m/s²)</p>
+                                <div class="q-options" id="q-options">
+                                    <div class="q-opt incorrect">A) 40.8 m <i class="fa-solid fa-circle-xmark"></i> (Student Answer)</div>
+                                    <div class="q-opt correct">B) 20.4 m <i class="fa-solid fa-circle-check"></i> (Correct Answer)</div>
+                                    <div class="q-opt">C) 10.2 m</div>
+                                    <div class="q-opt">D) 204.0 m</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Multimodal Diagnostic Output Panel -->
+                <div class="card glass-card highlight-card margin-top">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-wand-magic-sparkles icon-gold"></i>
+                            <h3>MindGap AI Multimodal Diagnostics Result</h3>
+                        </div>
+                        <div class="badge badge-gold"><i class="fa-solid fa-circle-nodes"></i> Deep Conceptual Root Cause Identified</div>
+                    </div>
+                    <div class="card-body grid-layout grid-2">
+                        <div class="gap-summary-box">
+                            <div class="summary-tag text-danger">
+                                <i class="fa-solid fa-triangle-exclamation"></i> Identified Misconception:
+                            </div>
+                            <h4 id="diag-misconception-title">Acceleration Direction vs. Velocity Sign Confusion</h4>
+                            <p id="diag-misconception-desc">
+                                Student understands the kinetic equations but systematically forgets that acceleration due to gravity (g) acts in opposition to upward velocity. Student added +0.5gt² instead of subtracting 0.5gt².
+                            </p>
+                            <div class="gap-metrics">
+                                <span>Severity: <strong class="text-danger" id="diag-severity">High (Prerequisite Failure)</strong></span>
+                                <span>Impacted Downstream Topics: <strong class="text-warning" id="diag-impact">3 Topics</strong></span>
+                            </div>
+                        </div>
+                        <div class="action-box align-self-center">
+                            <p class="action-desc">MindGap AI has updated the Student's Knowledge Graph and built a custom interactive micro-lesson.</p>
+                            <div class="btn-group">
+                                <button class="btn btn-primary" onclick="app.switchTab('knowledge-graph')">
+                                    <i class="fa-solid fa-diagram-project"></i> View Gap in Knowledge Graph
+                                </button>
+                                <button class="btn btn-accent" onclick="app.switchTab('interventions')">
+                                    <i class="fa-solid fa-bolt"></i> Start Personalized Intervention
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: KNOWLEDGE GRAPH -->
+            <section id="tab-knowledge-graph" class="tab-content">
+                <div class="graph-layout">
+                    <div class="graph-main card glass-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fa-solid fa-diagram-project icon-cyan"></i>
+                                <h3>Cognitive Prerequisite Knowledge Graph</h3>
+                            </div>
+                            <div class="graph-legend">
+                                <span class="legend-item"><span class="dot green"></span> Mastered</span>
+                                <span class="legend-item"><span class="dot yellow"></span> Partial Gap</span>
+                                <span class="legend-item"><span class="dot red blink"></span> Root Conceptual Gap</span>
+                            </div>
+                        </div>
+                        <div class="card-body graph-container">
+                            <div id="vis-knowledge-graph" class="vis-graph"></div>
+                        </div>
+                    </div>
+
+                    <div class="graph-sidebar card glass-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <h3>Node Detail Inspector</h3>
+                            </div>
+                        </div>
+                        <div class="card-body" id="node-inspector">
+                            <div class="empty-inspector">
+                                <i class="fa-solid fa-hand-pointer"></i>
+                                <p>Click any concept node in the graph to inspect prerequisite relationships and evidence.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: CENTURY AI LEARNING NUGGETS & NEUROSCIENCE PATHWAY -->
+            <section id="tab-nuggets" class="tab-content">
+                <div class="grid-layout grid-3 margin-bottom">
+                    <!-- Century Tri-Pillar: AI -->
+                    <div class="card glass-card">
+                        <div class="card-body" style="display:flex; align-items:center; gap:16px;">
+                            <div style="width:48px; height:48px; border-radius:12px; background:rgba(0,240,255,0.15); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:22px;">
+                                <i class="fa-solid fa-robot"></i>
+                            </div>
+                            <div>
+                                <h4 style="font-family:var(--font-heading); color:#fff; font-size:16px;">Artificial Intelligence</h4>
+                                <p style="font-size:12px; color:var(--text-muted);">Real-time personalized micro-pathways</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Century Tri-Pillar: Learning Science -->
+                    <div class="card glass-card">
+                        <div class="card-body" style="display:flex; align-items:center; gap:16px;">
+                            <div style="width:48px; height:48px; border-radius:12px; background:rgba(157,78,221,0.15); color:#d8b4fe; display:flex; align-items:center; justify-content:center; font-size:22px;">
+                                <i class="fa-solid fa-microscope"></i>
+                            </div>
+                            <div>
+                                <h4 style="font-family:var(--font-heading); color:#fff; font-size:16px;">Learning Science</h4>
+                                <p style="font-size:12px; color:var(--text-muted);">Micro-Nugget diagnostic assessments</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Century Tri-Pillar: Neuroscience -->
+                    <div class="card glass-card">
+                        <div class="card-body" style="display:flex; align-items:center; gap:16px;">
+                            <div style="width:48px; height:48px; border-radius:12px; background:rgba(255,183,3,0.15); color:#fde047; display:flex; align-items:center; justify-content:center; font-size:22px;">
+                                <i class="fa-solid fa-brain"></i>
+                            </div>
+                            <div>
+                                <h4 style="font-family:var(--font-heading); color:#fff; font-size:16px;">Neuroscience</h4>
+                                <p style="font-size:12px; color:var(--text-muted);">Forgetting curve & spaced repetition</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommended Learning Pathway Row -->
+                <div class="card glass-card highlight-card margin-bottom">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-compass icon-gold"></i>
+                            <h3>My Recommended Learning Pathway</h3>
+                        </div>
+                        <span class="badge badge-gold"><i class="fa-solid fa-bolt"></i> Century AI Recommendation Engine</span>
+                    </div>
+                    <div class="card-body" id="nuggets-pathway-container">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Memory Retention & Spaced Repetition Neuroscience Panel -->
+                <div class="card glass-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-chart-area icon-purple"></i>
+                            <h3>Neuroscience Memory Retention & Forgetting Curve Analysis</h3>
+                        </div>
+                    </div>
+                    <div class="card-body grid-layout grid-2">
+                        <div>
+                            <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">
+                                Based on Ebbinghaus Forgetting Curve algorithms, MindGap AI calculates memory decay rates to prompt timely review nuggets before knowledge lapses occurs.
+                            </p>
+                            <div class="telemetry-metrics">
+                                <div class="metric-item">
+                                    <span class="metric-label">Estimated Memory Retention:</span>
+                                    <span class="metric-val text-warning" id="retention-val">42% (Memory Decay Alert)</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-label">Forgetting Curve Status:</span>
+                                    <span class="metric-val text-danger" id="forgetting-status">Urgent Spaced Practice Recommended</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="background:rgba(0,0,0,0.3); border-radius:var(--radius-md); padding:16px; text-align:center; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                            <i class="fa-solid fa-hourglass-half" style="font-size:32px; color:var(--accent-gold); margin-bottom:10px;"></i>
+                            <h4 style="font-family:var(--font-heading); color:#fff; font-size:16px;">Spaced Repetition Triggered</h4>
+                            <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">Next review scheduled in 24 hours to lock concept into long-term memory.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: PERSONALIZED AI INTERVENTIONS -->
+            <section id="tab-interventions" class="tab-content">
+                <div class="grid-layout grid-2">
+                    
+                    <!-- Micro-Remediation Card -->
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fa-solid fa-book-open-reader icon-gold"></i>
+                                <h3>AI Targeted Micro-Remediation</h3>
+                            </div>
+                            <span class="badge badge-gold">Interactive Explanation</span>
+                        </div>
+                        <div class="card-body" id="intervention-remediation-body">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Adaptive Micro-Assessment Generator -->
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fa-solid fa-list-check icon-purple"></i>
+                                <h3>Adaptive Follow-up Practice</h3>
+                            </div>
+                            <span class="badge badge-purple">Targeted 3-Q Verification</span>
+                        </div>
+                        <div class="card-body" id="intervention-quiz-body">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: TEACHER HEATMAP & CLASSROOM INSIGHTS -->
+            <section id="tab-teacher-dashboard" class="tab-content">
+                <div class="grid-layout grid-2 margin-bottom">
+                    
+                    <!-- Class Gap Heatmap Chart -->
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fa-solid fa-fire icon-danger"></i>
+                                <h3>Classroom Conceptual Misconception Matrix</h3>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="teacher-heatmap-chart" height="220"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Automatic Grouping Engine -->
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fa-solid fa-users-gear icon-emerald"></i>
+                                <h3>AI Automated Student Grouping</h3>
+                            </div>
+                            <span class="badge badge-emerald">Differentiated Instruction</span>
+                        </div>
+                        <div class="card-body" id="teacher-groups-body">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card glass-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-table-list"></i>
+                            <h3>Student Mastery Status Roster</h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="custom-table" id="teacher-roster-table">
+                            <thead>
+                                <tr>
+                                    <th>Student Name</th>
+                                    <th>Subject</th>
+                                    <th>Identified Root Gap</th>
+                                    <th>Confidence</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Webcam Modal -->
+    <div class="modal-overlay hidden" id="webcam-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-camera"></i> Live Scratchpad Camera Scanner</h3>
+                <button class="btn-close" id="btn-close-webcam"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <video id="webcam-video" autoplay playsinline></video>
+                <canvas id="webcam-canvas" class="hidden"></canvas>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancel-cam">Cancel</button>
+                <button class="btn btn-primary" id="btn-capture-cam"><i class="fa-solid fa-camera-retro"></i> Capture Scratchpad</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/multimodal.js"></script>
+    <script src="js/gap-graph.js"></script>
+    <script src="js/interventions.js"></script>
+    <script src="js/teacher.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

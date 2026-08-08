@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindGap AI - Multimodal Student Learning Gap Detection & Remediation Platform</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+    <link rel="shortcut icon" href="favicon.ico">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Bright Light Theme for Landing Page */
+        body.light-landing {
+            background-color: #ffffff;
+            color: #0f172a;
+            font-family: var(--font-body);
+            line-height: 1.5;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .landing-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 48px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid #e2e8f0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .landing-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .landing-brand img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+
+        .landing-brand h2 {
+            font-family: var(--font-heading);
+            font-size: 22px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .landing-nav-link {
+            color: #334155;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .landing-nav-link:hover {
+            color: #0284c7;
+        }
+
+        .hero-section {
+            padding-top: 130px;
+            padding-bottom: 60px;
+            text-align: center;
+            max-width: 1150px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 18px;
+            border-radius: 30px;
+            background: #e0f2fe;
+            border: 1px solid #bae6fd;
+            color: #0284c7;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .hero-title {
+            font-family: var(--font-heading);
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1.15;
+            color: #0f172a;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #0284c7, #7c3aed, #ea580c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: #475569;
+            max-width: 800px;
+            margin: 0 auto 36px auto;
+            line-height: 1.6;
+        }
+
+        .hero-cta-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 48px;
+        }
+
+        .btn-bright-primary {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.3);
+            padding: 14px 32px;
+            font-size: 16px;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+
+        .btn-bright-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4);
+            color: #fff;
+        }
+
+        .btn-bright-secondary {
+            background: #f1f5f9;
+            color: #0f172a;
+            border: 1px solid #cbd5e1;
+            padding: 14px 32px;
+            font-size: 16px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .btn-bright-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        /* Compact Side-by-Side Feature Section */
+        .side-by-side-feature {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            align-items: center;
+            gap: 40px;
+            margin: 40px auto 48px auto;
+            max-width: 1050px;
+            text-align: left;
+            background: #ffffff;
+            padding: 16px 0;
+        }
+
+        .side-text-col {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .sub-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #0284c7;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .side-text-col h2 {
+            font-family: var(--font-heading);
+            font-size: 32px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 12px;
+            line-height: 1.25;
+        }
+
+        .side-text-col p {
+            font-size: 15px;
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .feature-bullets {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .bullet-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .bullet-item i {
+            color: #0284c7;
+        }
+
+        .side-video-col {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .compact-seamless-video {
+            max-width: 380px;
+            width: 100%;
+            display: block;
+            mix-blend-mode: multiply;
+            border: none !important;
+            box-shadow: none !important;
+            outline: none !important;
+        }
+
+        .century-impact-section {
+            background: #ffffff;
+            padding: 40px 24px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 36px;
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .impact-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .animated-icon-wrapper {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            background: #ffffff;
+        }
+
+        .animated-icon {
+            max-height: 110px;
+            max-width: 100%;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+        }
+
+        .impact-col h3 {
+            font-family: var(--font-heading);
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 10px;
+        }
+
+        .impact-col p {
+            font-size: 15px;
+            color: #64748b;
+            line-height: 1.5;
+            max-width: 290px;
+        }
+
+        /* Scroll & Popup Entry Animations */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(32px) scale(0.96);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .slide-from-left {
+            opacity: 0;
+            transform: translateX(-80px);
+            transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .slide-from-right {
+            opacity: 0;
+            transform: translateX(80px);
+            transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .slide-from-left.is-visible,
+        .slide-from-right.is-visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Animated Student Real Images Sliding In */
+        .student-illustrations-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            gap: 16px;
+            margin-top: 14px;
+            margin-bottom: 20px;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 8px;
+        }
+
+        .student-illus-img {
+            max-height: 140px;
+            max-width: 48%;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.05));
+            transition: transform 0.3s ease;
+        }
+
+        .student-illus-img:hover {
+            transform: scale(1.05);
+        }
+
+        .hero-mockup-wrapper {
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 24px;
+        }
+
+        .section-header h2 {
+            font-family: var(--font-heading);
+            font-size: 36px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+
+        .section-header p {
+            color: #64748b;
+            font-size: 16px;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        /* Scale of Problem & Gap in Middle Section */
+        .problem-scale-section {
+            margin: 60px auto;
+            max-width: 1100px;
+            text-align: center;
+        }
+
+        .problem-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 30px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 28px;
+            margin-top: 32px;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .problem-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .problem-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .problem-card-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .problem-card-icon.red-glow {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .problem-card-icon.amber-glow {
+            background: #fffbe0;
+            color: #d97706;
+        }
+
+        .problem-stat {
+            font-family: var(--font-heading);
+            font-size: 40px;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.25;
+            margin-bottom: 6px;
+        }
+
+        .problem-stat-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+
+        .problem-card h3 {
+            font-family: var(--font-heading);
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 16px;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .problem-card p {
+            font-size: 15px;
+            color: #475569;
+            line-height: 1.85;
+            margin-bottom: 24px;
+        }
+
+        .data-unfused-bar {
+            margin-top: 20px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 10px 14px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .unfused-status {
+            color: #dc2626;
+            font-weight: 700;
+        }
+
+        .rationed-meter {
+            margin-top: 20px;
+        }
+
+        .meter-bar {
+            height: 14px;
+            background: #e2e8f0;
+            border-radius: 7px;
+            overflow: hidden;
+        }
+
+        .meter-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #dc2626, #ef4444);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Middle Gap Dilemma Widget (Bright Light Theme with Bluish Border) */
+        .middle-gap-widget {
+            background: #ffffff;
+            color: #0f172a;
+            border: 2px solid #0284c7;
+            border-radius: 24px;
+            padding: 40px 32px;
+            text-align: center;
+            box-shadow: 0 12px 40px rgba(2, 132, 199, 0.12);
+        }
+
+        .middle-gap-title {
+            font-family: var(--font-heading);
+            font-size: 26px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .middle-gap-sub {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        /* THE PROBLEM & THE SOLUTION Labels & Arrow Connector */
+        .problem-solution-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-heading);
+            font-size: 17px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 8px 24px;
+            border-radius: 30px;
+            margin-bottom: 20px;
+        }
+
+        .label-red {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1.5px solid #fecaca;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.08);
+        }
+
+        .label-cyan {
+            background: #e0f2fe;
+            color: #0284c7;
+            border: 1.5px solid #bae6fd;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.12);
+        }
+
+        .scroll-solution-connector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 28px 0 20px 0;
+        }
+
+        .connector-arrow {
+            font-size: 32px;
+            color: #0284c7;
+            animation: bounceArrow 2s infinite ease-in-out;
+            display: inline-block;
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            color: #0284c7;
+            font-weight: 700;
+            animation: blinkCursor 0.8s infinite;
+            margin-left: 2px;
+        }
+
+        @keyframes blinkCursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @keyframes bounceArrow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        .dilemma-cards-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto 32px auto;
+        }
+
+        .dilemma-card {
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: left;
+        }
+
+        .dilemma-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .dilemma-tag {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .tag-red { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+        .tag-blue { background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; }
+
+        .price-tag {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .dilemma-status {
+            font-size: 13px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .text-emerald { color: #059669; }
+        .text-danger { color: #dc2626; }
+
+        .dilemma-vs {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #0284c7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 14px;
+            color: #ffffff;
+            border: 2px solid #38bdf8;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+        }
+
+        .mindgap-solution-bridge {
+            background: linear-gradient(135deg, #f0f9ff, #f3e8ff);
+            border: 2px solid #0284c7;
+            border-radius: 16px;
+            padding: 24px 28px;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(2, 132, 199, 0.1);
+        }
+
+        .bridge-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #0284c7;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .mindgap-solution-bridge h4 {
+            font-family: var(--font-heading);
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .mindgap-solution-bridge p {
+            font-size: 14px;
+            color: #475569;
+            line-height: 1.75;
+            margin-top: 6px;
+        }
+
+        .pillar-card-light {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            text-align: center;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .pillar-card-light:hover {
+            transform: translateY(-6px);
+            border-color: #0284c7;
+        }
+
+        .feature-card-light {
+            background: #ffffff;
+            border: 2px solid #0f172a;
+            border-radius: 18px;
+            padding: 30px 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 4px 4px 0px #0f172a;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .feature-card-light:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #0f172a;
+        }
+
+        .stats-banner-light {
+            background: linear-gradient(135deg, #f0f9ff, #f3e8ff);
+            border: 1px solid #bae6fd;
+            border-radius: var(--radius-lg);
+            padding: 48px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            text-align: center;
+            gap: 24px;
+        }
+
+        .stat-num-light {
+            font-family: var(--font-heading);
+            font-size: 44px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .footer-light {
+            border-top: 1px solid #e2e8f0;
+            padding: 40px 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #64748b;
+            background: #f8fafc;
+        }
+    </style>
+</head>
+<body class="light-landing">
+
+    <!-- Bright Header Navbar -->
+    <header class="landing-navbar">
+        <div class="landing-brand">
+            <img src="assets/logo.png" alt="MindGap AI Logo">
+            <h2>MindGap <span style="color:#0284c7;">AI</span></h2>
+        </div>
+
+        <nav style="display:flex; gap:32px; font-size:14px;">
+            <a href="#features" class="landing-nav-link">Features</a>
+            <a href="#impact" class="landing-nav-link">Impact</a>
+            <a href="index.html" style="color:#0284c7; text-decoration:none; font-weight:700;">Launch App Demo</a>
+        </nav>
+
+        <div style="display:flex; gap:12px;">
+            <a href="index.html" class="btn btn-bright-primary">
+                <i class="fa-solid fa-rocket"></i> Launch Platform
+            </a>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <div class="hero-badge">
+            <i class="fa-solid fa-sparkles"></i> Team CodeSmiths • Powered by Multimodal AI
+        </div>
+        <h1 class="hero-title">
+            Detect Student Learning Gaps <br>
+            <span class="gradient-text">Before Test Scores Drop</span>
+        </h1>
+        <p class="hero-subtitle">
+            MindGap AI combines <strong>Multimodal Vision & Speech AI</strong>, <strong>Learning Science</strong>, and <strong>Neuroscience</strong> to analyze student scratchpads, voice explanations, and hesitation telemetry to pinpoint root-cause prerequisite gaps.
+        </p>
+
+        <div class="hero-cta-group">
+            <a href="index.html" class="btn btn-bright-primary">
+                <i class="fa-solid fa-circle-play"></i> Experience Live Multimodal Demo
+            </a>
+            <a href="#features" class="btn btn-bright-secondary">
+                <i class="fa-solid fa-layer-group"></i> Explore Multimodal Features
+            </a>
+        </div>
+
+        <!-- 1. Compact Side-by-Side Actionable Intelligence Feature -->
+        <div class="side-by-side-feature reveal-on-scroll">
+            <div class="side-text-col">
+                <h2>Actionable Intelligence for Every Learner</h2>
+                <p>MindGap AI synthesizes visual handwriting, verbal hesitation, and quiz telemetry into instant diagnostic feedback to eliminate learning bottlenecks.</p>
+                <div class="feature-bullets">
+                    <div class="bullet-item"><i class="fa-solid fa-circle-check"></i> Step-by-Step Misconception Breakdown</div>
+                    <div class="bullet-item"><i class="fa-solid fa-circle-check"></i> Prerequisite Knowledge Dependency Graph</div>
+                    <div class="bullet-item"><i class="fa-solid fa-circle-check"></i> Automated Spaced Repetition Scheduling</div>
+                </div>
+            </div>
+            <div class="side-video-col">
+                <video autoplay loop muted playsinline class="compact-seamless-video">
+                    <source src="actionable-intelligence.mp4" type="video/mp4">
+                </video>
+            </div>
+        </div>
+
+        <!-- 2. Scale of the Problem & Gap in the Middle Section -->
+        <div class="problem-scale-section">
+            <div class="problem-badge reveal-on-scroll"><i class="fa-solid fa-triangle-exclamation"></i> Scale of the Problem</div>
+            <h2 class="reveal-on-scroll" style="font-family:var(--font-heading); font-size:36px; font-weight:800; color:#0f172a; margin-bottom:12px;">Invisible Gaps & The Tutoring Dilemma</h2>
+            <p class="reveal-on-scroll" style="color:#64748b; font-size:16px; max-width:680px; margin:0 auto;">Learning gaps surface only when a student fails or drops out — long after the window for early intervention has closed.</p>
+
+            <div class="problem-grid">
+                <!-- Card 1: Scale of Problem (Sliding from Left) -->
+                <div class="problem-card slide-from-left">
+                    <div class="problem-card-icon red-glow">
+                        <i class="fa-solid fa-user-graduate" style="font-size:24px; color:#dc2626;"></i>
+                    </div>
+                    <div class="problem-stat text-danger">
+                        <span class="animated-count" data-target="1.6" data-suffix=" Billion+">1.6 Billion+</span>
+                    </div>
+                    <div class="problem-stat-label">Students Struggling In Digital Environments</div>
+                    
+                    <!-- Animated Student Real Images Sliding In from Left and Right -->
+                    <div class="student-illustrations-container">
+                        <img src="assets/student-female.png" alt="Struggling Student" class="student-illus-img slide-from-left">
+                        <img src="assets/student-male.webp" alt="Studying Student" class="student-illus-img slide-from-right">
+                    </div>
+
+                    <h3>Gaps Surface Too Late</h3>
+                    <p>We don’t really have a way to track learning gaps directly; they usually only surface when a student fails or drops out. By that point, we’ve already missed the window for early help.</p>
+                    <div class="data-unfused-bar">
+                        <span style="color:#64748b; font-weight:600;"><i class="fa-solid fa-database"></i> Attendance, Clicks & Quiz Attempts:</span>
+                        <span class="unfused-status">Unfused Data Silos <i class="fa-solid fa-link-slash"></i></span>
+                    </div>
+                </div>
+
+                <!-- Card 2: Cost of Current Fix (Sliding from Right) -->
+                <div class="problem-card slide-from-right">
+                    <div class="problem-card-icon amber-glow">
+                        <i class="fa-solid fa-sack-dollar"></i>
+                    </div>
+                    <div class="problem-stat" style="color:#d97706;">
+                        <span class="animated-count" data-target="4000" data-prefix="$1,000 – $" data-suffix="/yr">$1,000 – $4,000/yr</span>
+                    </div>
+                    <div class="problem-stat-label">Cost of Current Fix (Per Student / Year)</div>
+                    <h3>Rationed by Budget, Not Need</h3>
+                    <p>Effective 1:1 tutoring costs $1,000–$4,000 per student per year. Only ~1 in 10 public school students get it — it's rationed by school budget, not by need.</p>
+                    <div class="rationed-meter">
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:700; margin-bottom:8px;">
+                            <span style="color:#64748b;"><i class="fa-solid fa-user-xmark"></i> Public School 1:1 Access:</span>
+                            <span style="color:#dc2626; font-weight:800;">Only <span class="animated-count" data-target="10" data-suffix="%">10%</span> Covered</span>
+                        </div>
+                        <div class="meter-bar">
+                            <div class="meter-fill" style="width: 10%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- The Gap in the Middle Comparison Widget -->
+            <div class="middle-gap-widget reveal-on-scroll">
+                <h3 class="middle-gap-title typewriter-title" data-typing-text="What's the Actual Problem ?"><span class="typed-text">What's the Actual Problem ?</span><span class="typing-cursor">|</span></h3>
+                <p class="middle-gap-sub">Current education tools leave students stranded between two imperfect extremes:</p>
+
+                <!-- THE PROBLEM LABEL -->
+                <div class="problem-solution-label label-red reveal-on-scroll">
+                    <i class="fa-solid fa-triangle-exclamation"></i> THE PROBLEM
+                </div>
+
+                <div class="dilemma-cards-grid">
+                    <div class="dilemma-card slide-from-left">
+                        <div class="dilemma-header">
+                            <span class="dilemma-tag tag-red">Expensive 1:1 Tutoring</span>
+                            <span class="price-tag">$1,000 - $4,000/yr</span>
+                        </div>
+                        <div class="dilemma-status text-emerald"><i class="fa-solid fa-check-circle"></i> Works great</div>
+                        <div class="dilemma-status text-danger"><i class="fa-solid fa-times-circle"></i> Almost nobody can afford it</div>
+                    </div>
+
+                    <div class="dilemma-vs">VS</div>
+
+                    <div class="dilemma-card slide-from-right">
+                        <div class="dilemma-header">
+                            <span class="dilemma-tag tag-blue">Cheap Quiz Apps</span>
+                            <span class="price-tag">Free / $10/mo</span>
+                        </div>
+                        <div class="dilemma-status text-emerald"><i class="fa-solid fa-check-circle"></i> Affordable & Scalable</div>
+                        <div class="dilemma-status text-danger"><i class="fa-solid fa-times-circle"></i> Too shallow to find specific root cause</div>
+                    </div>
+                </div>
+
+                <!-- ANIMATED DOWNWARD ARROW CONNECTOR -->
+                <div class="scroll-solution-connector reveal-on-scroll">
+                    <div class="connector-arrow">
+                        <i class="fa-solid fa-arrow-down-long"></i>
+                    </div>
+                </div>
+
+                <!-- THE SOLUTION LABEL -->
+                <div class="problem-solution-label label-cyan reveal-on-scroll">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> THE SOLUTION
+                </div>
+
+                <div class="mindgap-solution-bridge reveal-on-scroll">
+                    <div class="bridge-badge"><img src="assets/logo.png" alt="Logo" style="height:26px; width:auto; border-radius:4px; vertical-align:middle; margin-right:4px;"> The MindGap AI Bridge</div>
+                    <h4>Multimodal Root-Cause Diagnostic Engine</h4>
+                    <p>Delivers the 1:1 deep diagnostic depth of expensive human tutoring at the scalable cost of software by fusing scratchpads, speech, and telemetry.</p>
+                </div>
+            </div>
+
+            <!-- 3. Three Column Century Impact Section (Accelerates learning, Reduces workload, Enhances teaching) -->
+            <div class="century-impact-section reveal-on-scroll" style="margin-top:56px; margin-bottom:0;">
+                <div class="impact-col">
+                    <div class="animated-icon-wrapper">
+                        <video autoplay loop muted playsinline class="animated-icon">
+                            <source src="meter_1.0.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <h3>Accelerates learning</h3>
+                    <p>Intelligent personalisation improves student engagement and understanding</p>
+                </div>
+
+                <div class="impact-col">
+                    <div class="animated-icon-wrapper">
+                        <video autoplay loop muted playsinline class="animated-icon">
+                            <source src="book-stack_1.2.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <h3>Reduces workload</h3>
+                    <p>Saves teachers hours in marking, analysis and resource creation</p>
+                </div>
+
+                <div class="impact-col">
+                    <div class="animated-icon-wrapper">
+                        <video autoplay loop muted playsinline class="animated-icon">
+                            <source src="arrow_1.0.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <h3>Enhances teaching</h3>
+                    <p>Actionable data insights support timely, targeted interventions</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MULTIMODAL FEATURE GRID -->
+
+    <!-- MULTIMODAL FEATURE GRID -->
+    <section id="features" class="section-container reveal-on-scroll" style="background:#f8fafc; border-radius:var(--radius-lg); border:1px solid #e2e8f0; text-align:center;">
+        <div class="section-header reveal-on-scroll" style="text-align:center;">
+            <h2 class="reveal-on-scroll" style="text-align:center; font-family:var(--font-heading); font-size:36px; font-weight:800; color:#0f172a; margin-bottom:12px;">Out-of-the-Box Multimodal Channels</h2>
+            <p class="reveal-on-scroll" style="text-align:center; color:#64748b; font-size:16px; max-width:640px; margin:0 auto;">Traditional software only looks at correct vs. incorrect options. MindGap AI understands HOW students think.</p>
+        </div>
+
+        <div class="grid-layout grid-2" style="text-align:left;">
+            <div class="feature-card-light slide-from-left">
+                <h3 style="font-family:var(--font-heading); color:#0f172a; font-size:19px; font-weight:800;">Visual Scratchpad & Handwriting OCR</h3>
+                <p style="font-size:14px; color:#475569; line-height:1.75;">
+                    Students upload photos or use a live webcam to scan handwritten math/physics steps. Gemini Multimodal Vision highlights step-by-step calculation errors.
+                </p>
+            </div>
+
+            <div class="feature-card-light slide-from-right">
+                <h3 style="font-family:var(--font-heading); color:#0f172a; font-size:19px; font-weight:800;">Voice "Think-Aloud" Audio Analysis</h3>
+                <p style="font-size:14px; color:#475569; line-height:1.75;">
+                    Speech-to-text transcript analysis detects verbal hesitation, self-doubt, and spoken reasoning gaps during problem solving.
+                </p>
+            </div>
+
+            <div class="feature-card-light slide-from-left">
+                <h3 style="font-family:var(--font-heading); color:#0f172a; font-size:19px; font-weight:800;">Prerequisite Knowledge Dependency Graph</h3>
+                <p style="font-size:14px; color:#475569; line-height:1.75;">
+                    Interactive physics-based network graph visually isolating root conceptual bottlenecks (red nodes) from downstream blocked topics.
+                </p>
+            </div>
+
+            <div class="feature-card-light slide-from-right">
+                <h3 style="font-family:var(--font-heading); color:#0f172a; font-size:19px; font-weight:800;">Teacher Misconception Heatmap & Grouping</h3>
+                <p style="font-size:14px; color:#475569; line-height:1.75;">
+                    Classroom analytics matrix that automatically groups students with identical misconceptions for targeted peer instruction.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- IMPACT METRICS -->
+    <section id="impact" class="section-container reveal-on-scroll">
+        <div class="stats-banner-light reveal-on-scroll">
+            <div class="slide-from-left">
+                <div class="stat-num-light" style="color:#d97706;">
+                    <span class="animated-count" data-target="3.2" data-suffix="x">3.2x</span>
+                </div>
+                <div style="font-size:14px; color:#64748b; margin-top:4px;">Faster Root Gap Resolution</div>
+            </div>
+            <div class="reveal-on-scroll">
+                <div class="stat-num-light" style="color:#0284c7;">
+                    <span class="animated-count" data-target="89" data-suffix="%">89%</span>
+                </div>
+                <div style="font-size:14px; color:#64748b; margin-top:4px;">Reduction in Teacher Marking Hours</div>
+            </div>
+            <div class="slide-from-right">
+                <div class="stat-num-light" style="color:#059669;">
+                    <span class="animated-count" data-target="94" data-suffix="%">94%</span>
+                </div>
+                <div style="font-size:14px; color:#64748b; margin-top:4px;">Student Engagement & Concept Mastery</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="section-container reveal-on-scroll" style="text-align:center;">
+        <h2 class="reveal-on-scroll" style="font-family:var(--font-heading); font-size:40px; color:#0f172a; margin-bottom:16px;">Ready to Close Student Learning Gaps?</h2>
+        <p class="reveal-on-scroll" style="font-size:16px; color:#64748b; max-width:600px; margin:0 auto 32px auto;">Try the live interactive MindGap AI platform with pre-configured benchmark profiles or custom multimodal camera/voice inputs.</p>
+        <a href="index.html" class="btn btn-bright-primary reveal-on-scroll" style="padding:16px 36px; font-size:18px;">
+            <i class="fa-solid fa-bolt"></i> Launch Live Application Now
+        </a>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer-light" style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; align-items:center; gap:12px;">
+            <img src="assets/logo.png" alt="MindGap AI Logo" style="height:42px; width:auto;">
+            <span><strong>MindGap AI</strong> • Multimodal Learning Science Platform</span>
+        </div>
+        <div>
+            Developed by <strong>Team CodeSmiths</strong> for Departmental Hackathon
+        </div>
+    </footer>
+
+    <!-- Interactive Scroll Animations & Counting Numbers Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const reveals = document.querySelectorAll('.reveal-on-scroll, .slide-from-left, .slide-from-right');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        
+                        const counters = entry.target.querySelectorAll('.animated-count');
+                        counters.forEach(counter => animateCounter(counter));
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            reveals.forEach(el => observer.observe(el));
+
+            const directCounters = document.querySelectorAll('.animated-count');
+            const counterObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCounter(entry.target);
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            directCounters.forEach(c => counterObserver.observe(c));
+
+            // Typewriter Animation Observer
+            const typewriterObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        startTypingAnimation(entry.target);
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            document.querySelectorAll('.typewriter-title').forEach(el => typewriterObserver.observe(el));
+
+            function startTypingAnimation(el) {
+                if (el.getAttribute('data-typed-started') === 'true') return;
+                el.setAttribute('data-typed-started', 'true');
+
+                const textToType = el.getAttribute('data-typing-text') || "What's the Actual Problem ?";
+                const targetSpan = el.querySelector('.typed-text');
+                if (!targetSpan) return;
+
+                targetSpan.textContent = '';
+                let index = 0;
+                const speed = 60;
+
+                function typeChar() {
+                    if (index < textToType.length) {
+                        targetSpan.textContent += textToType.charAt(index);
+                        index++;
+                        setTimeout(typeChar, speed);
+                    }
+                }
+                typeChar();
+            }
+
+            function animateCounter(el) {
+                if (el.getAttribute('data-animated') === 'true') return;
+                el.setAttribute('data-animated', 'true');
+
+                const targetStr = el.getAttribute('data-target');
+                const prefix = el.getAttribute('data-prefix') || '';
+                const suffix = el.getAttribute('data-suffix') || '';
+                const targetVal = parseFloat(targetStr);
+                const decimals = targetStr.includes('.') ? 1 : 0;
+                const duration = 1400;
+                const startTime = performance.now();
+
+                function update(now) {
+                    const elapsed = now - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const easeProgress = 1 - Math.pow(1 - progress, 3);
+                    const currentVal = (targetVal * easeProgress).toFixed(decimals);
+                    
+                    el.innerText = `${prefix}${currentVal}${suffix}`;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(update);
+                    } else {
+                        el.innerText = `${prefix}${targetStr}${suffix}`;
+                    }
+                }
+                requestAnimationFrame(update);
+            }
+        });
+    </script>
+</body>
+</html>
