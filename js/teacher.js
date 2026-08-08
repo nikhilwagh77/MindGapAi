@@ -191,23 +191,44 @@ window.TeacherDashboardController = {
         const notes = MINDGAP_DATA.teacherNotes || [];
         if (countBadge) countBadge.textContent = `${notes.length} Notes Active`;
 
+        if (notes.length === 0) {
+            container.innerHTML = `
+                <div style="text-align:center; padding:40px; color:#94a3b8; grid-column:1/-1;">
+                    <i class="fa-solid fa-file-circle-plus" style="font-size:40px; margin-bottom:12px; display:block;"></i>
+                    <p>No notes yet. Upload a file or compose a note below.</p>
+                </div>`;
+            return;
+        }
+
         let html = '';
         notes.forEach(note => {
+            const subject = note.subject || 'General';
+            const date = note.date || 'Just now';
+            const title = note.title || 'Untitled Note';
+            const content = note.content || '';
+            const preview = content.substring(0, 160) + (content.length > 160 ? '...' : '');
+            const isUploaded = note.note_type === 'uploaded' || (note.tags && note.tags.includes('Uploaded'));
+            const fileName = note.file_name || (note.tags && note.tags[1] !== 'Uploaded' ? note.tags[1] : '');
+
             html += `
-                <div class="note-card">
-                    <div class="note-header">
-                        <span class="badge" style="background:#e0f2fe; color:#0284c7;">${note.subject}</span>
-                        <span style="font-size:11px; color:#64748b; font-weight:600;"><i class="fa-solid fa-clock"></i> ${note.date}</span>
+                <div class="note-card" style="border:1.5px solid #e2e8f0; border-radius:12px; padding:16px; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+                    <div class="note-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span class="badge" style="background:#e0f2fe; color:#0284c7; font-size:11px;">${subject}</span>
+                        <span style="font-size:11px; color:#94a3b8;"><i class="fa-solid fa-clock"></i> ${date}</span>
                     </div>
-                    <div class="note-title">${note.title}</div>
-                    <div class="note-body">${note.content.substring(0, 180)}...</div>
-                    <div class="note-footer">
-                        <span class="attachment-pill"><i class="fa-solid fa-paperclip"></i> ${note.fileAttachment}</span>
-                        <div style="display:flex; gap:6px;">
-                            <button class="btn btn-sm btn-outline" onclick="TeacherDashboardController.deleteNote('${note.id}')" title="Delete Note">
-                                <i class="fa-solid fa-trash text-danger"></i>
-                            </button>
+                    <div class="note-title" style="font-weight:700; font-size:14px; color:#0f172a; margin-bottom:6px;">${title}</div>
+                    ${isUploaded ? `
+                        <div style="display:flex; align-items:center; gap:8px; padding:8px 12px; background:#f0f9ff; border-radius:8px; margin-bottom:8px;">
+                            <i class="fa-solid fa-file-pdf" style="color:#dc2626; font-size:20px;"></i>
+                            <span style="font-size:12px; color:#334155; font-weight:600;">${fileName || title}</span>
                         </div>
+                    ` : `
+                        <div style="font-size:12px; color:#64748b; line-height:1.6; margin-bottom:8px;">${preview}</div>
+                    `}
+                    <div style="display:flex; justify-content:flex-end; gap:6px; border-top:1px solid #f1f5f9; padding-top:8px; margin-top:4px;">
+                        <button class="btn btn-sm btn-outline" onclick="TeacherDashboardController.deleteNote('${note.id}')" title="Delete Note" style="padding:4px 10px;">
+                            <i class="fa-solid fa-trash" style="color:#dc2626;"></i>
+                        </button>
                     </div>
                 </div>
             `;
