@@ -205,7 +205,7 @@ window.TeacherDashboardController = {
                 <tr>
                     <td>
                         <div class="student-cell">
-                            <img src="${s.avatar}" alt="${s.name}">
+                            <img src="${s.avatar}" alt="${s.name}" width="40" height="40" style="border-radius:50%; object-fit:cover; border:2px solid #e2e8f0; background:#f8fafc; flex-shrink:0;">
                             <div>
                                 <strong>${s.name}</strong>
                                 <div style="font-size:11px; color:#64748b;">${s.email}</div>

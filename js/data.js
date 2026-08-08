@@ -303,7 +303,7 @@ Remember to isolate $\\frac{dy}{dx}$ when working with implicit curves like $x^2
         {
             id: 'alex',
             name: 'Alex Chen',
-            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
+            avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=AlexChen&backgroundColor=b6e3f4&radius=50',
             email: 'alex.chen@student.edu',
             performancePct: 48,
             lastActivity: '10 mins ago',
@@ -331,7 +331,7 @@ Remember to isolate $\\frac{dy}{dx}$ when working with implicit curves like $x^2
         {
             id: 'priya',
             name: 'Priya Sharma',
-            avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80',
+            avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=PriyaSharma&backgroundColor=ffd5dc&radius=50',
             email: 'priya.sharma@student.edu',
             performancePct: 74,
             lastActivity: '1 hour ago',
@@ -358,7 +358,7 @@ Remember to isolate $\\frac{dy}{dx}$ when working with implicit curves like $x^2
         {
             id: 'jordan',
             name: 'Jordan Lee',
-            avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
+            avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=JordanLee&backgroundColor=d1f4e0&radius=50',
             email: 'jordan.lee@student.edu',
             performancePct: 92,
             lastActivity: '2 hours ago',
@@ -384,7 +384,7 @@ Remember to isolate $\\frac{dy}{dx}$ when working with implicit curves like $x^2
         {
             id: 'sarah',
             name: 'Sarah Jenkins',
-            avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80',
+            avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=SarahJenkins&backgroundColor=fff9c4&radius=50',
             email: 'sarah.j@student.edu',
             performancePct: 56,
             lastActivity: 'Yesterday',
