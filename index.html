@@ -36,8 +36,57 @@
                 </div>
             </div>
 
+            <!-- Role Selector Banner -->
+            <div class="role-selector-box">
+                <label><i class="fa-solid fa-users-gear"></i> Active Portal Mode:</label>
+                <div class="role-toggle-buttons">
+                    <button class="btn-role active" id="btn-role-teacher" data-role="teacher">
+                        <i class="fa-solid fa-chalkboard-user"></i> Teacher
+                    </button>
+                    <button class="btn-role" id="btn-role-student" data-role="student">
+                        <i class="fa-solid fa-user-graduate"></i> Student
+                    </button>
+                </div>
+            </div>
+
+            <!-- TEACHER NAVIGATION LINKS -->
+            <div class="nav-section-label" style="color:#0284c7;"><i class="fa-solid fa-chalkboard-user"></i> TEACHER PORTAL</div>
             <nav class="nav-menu">
-                <button class="nav-item active" data-tab="diagnostic">
+                <button class="nav-item active" data-tab="teacher-notes">
+                    <i class="fa-solid fa-book-bookmark"></i>
+                    <span>Today's Notes</span>
+                </button>
+                <button class="nav-item" data-tab="student-roster">
+                    <i class="fa-solid fa-chart-user"></i>
+                    <span>Student Performance</span>
+                </button>
+                <button class="nav-item" data-tab="teacher-dashboard">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Misconception Heatmap</span>
+                </button>
+            </nav>
+
+            <!-- STUDENT NAVIGATION LINKS -->
+            <div class="nav-section-label" style="color:#7c3aed;"><i class="fa-solid fa-user-graduate"></i> STUDENT PORTAL</div>
+            <nav class="nav-menu">
+                <button class="nav-item" data-tab="student-notes">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <span>Today's Notes</span>
+                </button>
+                <button class="nav-item" data-tab="student-assessment">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>Take Assessment</span>
+                </button>
+                <button class="nav-item" data-tab="student-performance">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Analyze Performance</span>
+                </button>
+            </nav>
+
+            <!-- AI ENGINE HUB LINKS -->
+            <div class="nav-section-label"><i class="fa-solid fa-microscope"></i> AI DIAGNOSTIC ENGINE</div>
+            <nav class="nav-menu">
+                <button class="nav-item" data-tab="diagnostic">
                     <i class="fa-solid fa-microscope"></i>
                     <span>Multimodal Diagnostic</span>
                 </button>
@@ -54,22 +103,18 @@
                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                     <span>AI Interventions</span>
                 </button>
-                <button class="nav-item" data-tab="teacher-dashboard">
-                    <i class="fa-solid fa-chalkboard-user"></i>
-                    <span>Teacher Heatmap</span>
-                </button>
             </nav>
 
             <div class="student-profile-selector">
                 <div class="selector-header">
                     <i class="fa-solid fa-user-graduate"></i>
-                    <span>Active Student Profile</span>
+                    <span>Selected Student Context</span>
                 </div>
                 <select id="profile-select" class="custom-select">
                     <option value="alex">Alex Chen (Physics - Kinematics Gap)</option>
                     <option value="priya">Priya Sharma (Math - Calculus Gap)</option>
                     <option value="jordan">Jordan Lee (CS - Recursion Gap)</option>
-                    <option value="custom">+ Live Custom Assessment</option>
+                    <option value="sarah">Sarah Jenkins (Physics - Deceleration Gap)</option>
                 </select>
                 <div class="subject-tag" id="subject-tag">Physics: Kinematics</div>
             </div>
@@ -77,7 +122,7 @@
             <div class="sidebar-footer">
                 <div class="api-status" id="api-status">
                     <span class="status-dot online"></span>
-                    <span class="status-text">Gemini Multimodal: Ready</span>
+                    <span class="status-text">MindGap AI Engine: Active</span>
                 </div>
             </div>
         </aside>
@@ -85,28 +130,410 @@
         <!-- Main Content Area -->
         <main class="main-content">
             
-            <!-- Top Navbar -->
+            <!-- Top Navbar Header -->
             <header class="top-header">
                 <div class="header-left">
-                    <h1 id="page-title">Multimodal Assessment & Diagnostics</h1>
-                    <p id="page-subtitle" class="text-muted">Analyze handwriting, voice explainers, and behavioral telemetry to detect hidden gaps</p>
+                    <h1 id="page-title">Today's Notes & Content Management</h1>
+                    <p id="page-subtitle" class="text-muted">Upload and compose daily lecture notes for student learning pathways</p>
                 </div>
                 <div class="header-right">
                     <div class="telemetry-badge">
-                        <i class="fa-solid fa-stopwatch"></i>
-                        <span>Hesitation Index: <strong id="telemetry-score">Low (1.2s)</strong></span>
+                        <i class="fa-solid fa-user-shield"></i>
+                        <span>Role: <strong id="header-role-badge" style="color:#0284c7;">Teacher</strong></span>
                     </div>
-                    <button class="btn btn-secondary" id="btn-reset-demo">
-                        <i class="fa-solid fa-rotate-left"></i> Reset Demo
-                    </button>
-                    <button class="btn btn-primary" id="btn-quick-scan">
-                        <i class="fa-solid fa-bolt"></i> Run AI Diagnosis
+                    <button class="btn btn-secondary" id="btn-switch-role-toggle">
+                        <i class="fa-solid fa-repeat"></i> Switch Portal
                     </button>
                 </div>
             </header>
 
+            <!-- TEACHER TAB 1: TODAY'S NOTES -->
+            <section id="tab-teacher-notes" class="tab-content active">
+                <div class="grid-layout grid-2 margin-bottom">
+                    <!-- Upload Notes Card -->
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fa-solid fa-cloud-arrow-up icon-cyan"></i>
+                                <h3>Upload Course Notes & Files</h3>
+                            </div>
+                            <span class="badge">PDF / Images / Text</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="upload-zone" id="teacher-note-upload-zone">
+                                <input type="file" id="teacher-file-input" accept=".pdf,.txt,image/*" class="file-input">
+                                <div class="upload-placeholder" onclick="document.getElementById('teacher-file-input').click()">
+                                    <i class="fa-solid fa-file-arrow-up"></i>
+                                    <p>Click to upload lecture slides, PDF notes, or textbook scans</p>
+                                    <button class="btn btn-sm btn-outline margin-top">
+                                        <i class="fa-solid fa-folder-open"></i> Browse Files
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="teacher-file-status" class="box-label margin-top hidden" style="color:#0284c7;">
+                                <i class="fa-solid fa-check-circle"></i> File attached: <span id="teacher-filename">Kinematics_Ch2.pdf</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Direct Rich Text Note Writer Card -->
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fa-solid fa-pen-to-square icon-purple"></i>
+                                <h3>Compose Lecture Note Directly</h3>
+                            </div>
+                            <span class="badge badge-purple">Rich Text Writer</span>
+                        </div>
+                        <div class="card-body">
+                            <div style="margin-bottom:12px; display:flex; gap:10px;">
+                                <input type="text" id="new-note-title" placeholder="Note Title (e.g. Vectors & Sign Conventions)" style="flex-grow:1; padding:8px 12px; border:1px solid #cbd5e1; border-radius:var(--radius-sm); font-size:13px;">
+                                <select id="new-note-subject" style="padding:8px 12px; border:1px solid #cbd5e1; border-radius:var(--radius-sm); font-size:13px;">
+                                    <option value="Physics">Physics</option>
+                                    <option value="Mathematics">Mathematics</option>
+                                    <option value="Computer Science">Computer Science</option>
+                                </select>
+                            </div>
+
+                            <div class="editor-toolbar">
+                                <button class="editor-btn" onclick="formatEditorText('bold')"><i class="fa-solid fa-bold"></i></button>
+                                <button class="editor-btn" onclick="formatEditorText('italic')"><i class="fa-solid fa-italic"></i></button>
+                                <button class="editor-btn" onclick="formatEditorText('list')"><i class="fa-solid fa-list-ul"></i></button>
+                                <button class="editor-btn" onclick="formatEditorText('code')"><i class="fa-solid fa-code"></i></button>
+                                <button class="editor-btn" onclick="formatEditorText('formula')"><i class="fa-solid fa-square-root-variable"></i> Math Formula</button>
+                            </div>
+                            <textarea id="new-note-content" class="editor-textarea" placeholder="Write today's note content, key formulas, or study hints here..."></textarea>
+
+                            <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
+                                <span class="text-muted" style="font-size:12px;"><i class="fa-solid fa-eye"></i> Students will see this immediately</span>
+                                <button class="btn btn-primary" id="btn-save-note">
+                                    <i class="fa-solid fa-paper-plane"></i> Save & Publish Note
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Uploaded Notes Library List/Grid -->
+                <div class="card glass-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-list-check icon-gold"></i>
+                            <h3>Today's Uploaded Notes Repository</h3>
+                        </div>
+                        <span class="badge badge-gold" id="teacher-notes-count-badge">2 Notes Active</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="notes-grid" id="teacher-notes-grid">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TEACHER TAB 2: STUDENT PERFORMANCE DASHBOARD -->
+            <section id="tab-student-roster" class="tab-content">
+                <div class="roster-filters">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="roster-search-input" placeholder="Search student by name, email, or weak area...">
+                    </div>
+                    <div class="filter-pills">
+                        <button class="pill-btn active" data-filter="all">All Students</button>
+                        <button class="pill-btn" data-filter="High Risk" style="color:#dc2626;">🚨 High Risk (<60%)</button>
+                        <button class="pill-btn" data-filter="Medium Risk" style="color:#d97706;">⚠️ Medium Risk</button>
+                        <button class="pill-btn" data-filter="Low Risk" style="color:#059669;">✅ Low Risk (>80%)</button>
+                    </div>
+                </div>
+
+                <div class="card glass-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-users icon-cyan"></i>
+                            <h3>Classroom Student Performance Roster</h3>
+                        </div>
+                        <span class="badge">Real-time AI Analytics</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="custom-table" id="student-performance-table">
+                            <thead>
+                                <tr>
+                                    <th>Student Name</th>
+                                    <th>Overall Performance</th>
+                                    <th>Last Activity</th>
+                                    <th>Risk Level</th>
+                                    <th>Top Weak Area</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="student-roster-tbody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STUDENT TAB 1: TODAY'S NOTES (READING VIEW) -->
+            <section id="tab-student-notes" class="tab-content">
+                <div class="card glass-card margin-bottom">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-book-open icon-purple"></i>
+                            <h3>Today's Published Course Notes</h3>
+                        </div>
+                        <span class="badge badge-purple">Assigned Reading</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="notes-grid" id="student-notes-grid">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA Banner Button -->
+                <div class="card glass-card" style="background:linear-gradient(135deg, #f0f9ff, #f3e8ff); border:2px solid #0284c7; text-align:center; padding:32px;">
+                    <h2 style="font-family:var(--font-heading); font-size:24px; color:#0f172a; margin-bottom:8px;">Ready to Test Your Understanding?</h2>
+                    <p style="color:#64748b; font-size:14px; max-width:600px; margin:0 auto 20px auto;">Generate adaptive AI assessments based on today's lecture notes (MCQ with timer, Rapid Fire one-liners, and Speech Think-Aloud).</p>
+                    <button class="btn btn-primary" id="btn-start-assessment-cta" style="padding:14px 32px; font-size:16px;">
+                        👉 Take Personalized Assessment Now
+                    </button>
+                </div>
+            </section>
+
+            <!-- STUDENT TAB 2: ASSESSMENT FLOW HUB -->
+            <section id="tab-student-assessment" class="tab-content">
+                <div class="assessment-nav-bar">
+                    <button class="assessment-nav-btn active" id="btn-nav-mcq" onclick="switchAssessmentSubTab('mcq')">
+                        <i class="fa-solid fa-list-check"></i> 1. MCQ Test Page
+                    </button>
+                    <button class="assessment-nav-btn" id="btn-nav-rf" onclick="switchAssessmentSubTab('rapidfire')">
+                        <i class="fa-solid fa-bolt"></i> 2. Rapid Fire (Text Input)
+                    </button>
+                    <button class="assessment-nav-btn" id="btn-nav-speech" onclick="switchAssessmentSubTab('speech')">
+                        <i class="fa-solid fa-microphone"></i> 3. Live Speech Test
+                    </button>
+                </div>
+
+                <!-- SUB-TAB 1: MCQ TEST PAGE -->
+                <div id="subtab-mcq-test" class="assessment-subtab">
+                    <div class="card glass-card margin-bottom">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fa-solid fa-list-check icon-cyan"></i>
+                                <h3>MCQ Assessment: Kinematics & Physics</h3>
+                            </div>
+                            <div class="timer-badge">
+                                <i class="fa-solid fa-clock"></i> Time Left: <span id="mcq-timer-clock">05:00</span>
+                            </div>
+                        </div>
+                        <div class="card-body" id="mcq-questions-container">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-TAB 2: RAPID FIRE TEST PAGE -->
+                <div id="subtab-rapidfire-test" class="assessment-subtab hidden">
+                    <div class="card glass-card margin-bottom">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fa-solid fa-bolt icon-gold"></i>
+                                <h3>Rapid Fire: One-Line Response Mode</h3>
+                            </div>
+                            <span class="badge badge-gold">Fast Friction-Free UI</span>
+                        </div>
+                        <div class="card-body" id="rf-questions-container">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-TAB 3: LIVE SPEECH TEST PAGE -->
+                <div id="subtab-speech-test" class="assessment-subtab hidden">
+                    <div class="card glass-card margin-bottom">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fa-solid fa-microphone icon-purple"></i>
+                                <h3>Live Speech "Think-Aloud" Assessment</h3>
+                            </div>
+                            <span class="badge badge-purple">Speech-to-Text AI</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="question-block" style="border-left:4px solid #7c3aed;">
+                                <div class="q-title">Voice Assessment Question</div>
+                                <h4 style="font-size:16px; color:#0f172a; margin-top:4px;" id="speech-prompt-text">
+                                    Explain step-by-step how you would calculate the time taken for an object launched upward at 20 m/s to reach maximum height.
+                                </h4>
+                            </div>
+
+                            <div class="audio-recorder-box margin-top">
+                                <div class="mic-visualizer" id="student-speech-mic-vis">
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                </div>
+                                <div class="audio-controls">
+                                    <button class="btn btn-circle btn-danger" id="btn-student-record-speech">
+                                        <i class="fa-solid fa-microphone"></i>
+                                    </button>
+                                    <div class="record-status" id="student-speech-status">Click microphone to speak your answer...</div>
+                                </div>
+                            </div>
+
+                            <div class="transcript-box margin-top">
+                                <div class="box-label"><i class="fa-solid fa-quote-left"></i> Real-time Speech-to-Text Transcript:</div>
+                                <p class="transcript-text" id="student-speech-transcript">
+                                    "I calculated time by setting apex velocity to 0. Velocity formula v = u + at gives 0 = 20 + (-9.8)t, so t = 20 / 9.8 = 2.04 seconds."
+                                </p>
+                            </div>
+
+                            <div style="text-align:right; margin-top:20px;">
+                                <button class="btn btn-primary" id="btn-submit-speech-test">
+                                    <i class="fa-solid fa-check"></i> Submit Live Speech Recording
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Test Selection Navigation Cards Banner -->
+                <div class="grid-layout grid-3 margin-top">
+                    <button class="assessment-nav-btn" onclick="switchAssessmentSubTab('mcq')">
+                        <i class="fa-solid fa-list-check"></i> Take MCQ Test
+                    </button>
+                    <button class="assessment-nav-btn" onclick="switchAssessmentSubTab('rapidfire')">
+                        <i class="fa-solid fa-bolt"></i> Take Rapid Fire Test
+                    </button>
+                    <button class="assessment-nav-btn" onclick="switchAssessmentSubTab('speech')">
+                        <i class="fa-solid fa-microphone"></i> Take Speech Test
+                    </button>
+                </div>
+            </section>
+
+            <!-- STUDENT TAB 3: ANALYZE YOUR PERFORMANCE -->
+            <section id="tab-student-performance" class="tab-content">
+                <div class="analytics-grid-2 margin-bottom">
+                    <!-- Line Chart: Score Trends over Time -->
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fa-solid fa-chart-line icon-cyan"></i>
+                                <h3>Score Trends Over Time</h3>
+                            </div>
+                            <span class="badge">Historical Progress</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-wrapper">
+                                <canvas id="student-own-score-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bar Chart: Comparison Across Test Types -->
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fa-solid fa-chart-simple icon-purple"></i>
+                                <h3>Comparison Across Test Types</h3>
+                            </div>
+                            <span class="badge badge-purple">Test Breakdown</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-wrapper">
+                                <canvas id="student-own-test-type-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Suggestions & Feedback Section -->
+                <div class="card glass-card margin-bottom">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-robot icon-gold"></i>
+                            <h3>Personalized AI Feedback & Suggestions</h3>
+                        </div>
+                        <span class="badge badge-gold">AI Learning Coach</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid-layout grid-3">
+                            <div class="question-block" style="border-top:3px solid #0284c7;">
+                                <div class="q-title"><i class="fa-solid fa-list-check"></i> MCQ Test Feedback</div>
+                                <p style="font-size:13px; color:#475569; margin-top:6px;" id="ai-feedback-mcq">
+                                    Excellent accuracy on basic equations. Watch out for negative sign placement in 2-step projectile problems.
+                                </p>
+                            </div>
+
+                            <div class="question-block" style="border-top:3px solid #d97706;">
+                                <div class="q-title"><i class="fa-solid fa-bolt"></i> Rapid Fire Feedback</div>
+                                <p style="font-size:13px; color:#475569; margin-top:6px;" id="ai-feedback-rf">
+                                    Fast friction-free responses with an average response time of 1.4s per question.
+                                </p>
+                            </div>
+
+                            <div class="question-block" style="border-top:3px solid #7c3aed;">
+                                <div class="q-title"><i class="fa-solid fa-microphone"></i> Speech Test Feedback</div>
+                                <p style="font-size:13px; color:#475569; margin-top:6px;" id="ai-feedback-speech">
+                                    Verbal hesitation detected around apex velocity definition. Recommended: Speak with confidence on 1D vector signs.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Improvement Insights & Study Plan -->
+                <div class="grid-layout grid-2">
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fa-solid fa-triangle-exclamation icon-danger"></i>
+                                <h3>Identified Weak Topics & Remediation</h3>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:8px;" id="weak-topics-list">
+                                <li style="padding:10px 14px; background:#fef2f2; border:1px solid #fecaca; border-radius:var(--radius-sm); color:#dc2626; font-size:13px; font-weight:600;">
+                                    <i class="fa-solid fa-circle-exclamation"></i> Vertical Motion Vector Sign Conventions
+                                </li>
+                                <li style="padding:10px 14px; background:#fffbe0; border:1px solid #fde68a; border-radius:var(--radius-sm); color:#d97706; font-size:13px; font-weight:600;">
+                                    <i class="fa-solid fa-circle-exclamation"></i> 2D Parabolic Trajectory Vectors
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fa-solid fa-calendar-check icon-emerald"></i>
+                                <h3>Suggested 3-Day Personalized Study Plan</h3>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="study-plan-grid">
+                                <div class="study-plan-card">
+                                    <div class="study-day">Day 1</div>
+                                    <div class="study-task">Review Nugget #1: Vector Directions</div>
+                                </div>
+                                <div class="study-plan-card">
+                                    <div class="study-day">Day 2</div>
+                                    <div class="study-task">5 Rapid Fire practice drills</div>
+                                </div>
+                                <div class="study-plan-card">
+                                    <div class="study-day">Day 3</div>
+                                    <div class="study-task">Retake Live Speech Test</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- TAB 1: MULTIMODAL DIAGNOSTIC -->
-            <section id="tab-diagnostic" class="tab-content active">
+            <section id="tab-diagnostic" class="tab-content">
                 <div class="grid-layout grid-3">
                     
                     <!-- Channel 1: Scratchpad & Handwriting (Vision) -->
@@ -505,12 +932,117 @@
         </div>
     </div>
 
+    <!-- STUDENT PROFILE DETAIL MODAL FOR TEACHERS -->
+    <div class="modal-overlay hidden" id="modal-student-profile-detail">
+        <div class="modal-card modal-card-lg">
+            <div class="modal-header">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <img id="sp-modal-avatar" src="" alt="Avatar" style="width:44px; height:44px; border-radius:50%; object-fit:cover;">
+                    <div>
+                        <h3 id="sp-modal-name" style="margin:0;">Student Profile</h3>
+                        <span id="sp-modal-email" style="font-size:12px; color:#64748b;">student@edu.com</span>
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <span class="risk-pill risk-high" id="sp-modal-risk-badge">HIGH RISK</span>
+                    <button class="btn-close" id="btn-close-sp-modal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+            <div class="modal-body" style="text-align:left; max-height:75vh; overflow-y:auto;">
+                <!-- Performance Analytics Section -->
+                <div class="analytics-grid-2">
+                    <div class="card glass-card">
+                        <div class="card-header" style="padding:12px 16px;">
+                            <h4 style="font-size:14px; font-weight:700;"><i class="fa-solid fa-chart-line icon-cyan"></i> Test Scores Over Time</h4>
+                        </div>
+                        <div class="card-body" style="padding:12px;">
+                            <div class="chart-wrapper">
+                                <canvas id="sp-modal-score-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card glass-card">
+                        <div class="card-header" style="padding:12px 16px;">
+                            <h4 style="font-size:14px; font-weight:700;"><i class="fa-solid fa-chart-bar icon-purple"></i> Topic-Wise Performance</h4>
+                        </div>
+                        <div class="card-body" style="padding:12px;">
+                            <div class="chart-wrapper">
+                                <canvas id="sp-modal-topic-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Insights & Learning Pattern -->
+                <div class="card glass-card margin-bottom">
+                    <div class="card-header" style="padding:12px 16px;">
+                        <h4 style="font-size:14px; font-weight:700;"><i class="fa-solid fa-brain icon-gold"></i> AI Insights & Identified Weak Areas</h4>
+                    </div>
+                    <div class="card-body" style="padding:16px;">
+                        <p style="font-size:13px; color:#475569; margin-bottom:10px;" id="sp-modal-pattern">
+                            Struggles with sign conventions during 2-step algebraic calculations. High verbal hesitation during think-aloud tests.
+                        </p>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap;" id="sp-modal-weak-tags">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Suggestions History & Growth Timeline -->
+                <div class="analytics-grid-2">
+                    <div class="card glass-card">
+                        <div class="card-header" style="padding:12px 16px;">
+                            <h4 style="font-size:14px; font-weight:700;"><i class="fa-solid fa-history icon-cyan"></i> Past AI Suggestions History</h4>
+                        </div>
+                        <div class="card-body" style="padding:12px;">
+                            <div class="timeline-list" id="sp-modal-ai-history">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card glass-card">
+                        <div class="card-header" style="padding:12px 16px;">
+                            <h4 style="font-size:14px; font-weight:700;"><i class="fa-solid fa-arrow-trend-up icon-emerald"></i> Understanding Growth Timeline</h4>
+                        </div>
+                        <div class="card-body" style="padding:12px;">
+                            <div class="chart-wrapper">
+                                <canvas id="sp-modal-growth-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teacher Feedback Input & AI Model Override -->
+                <div class="card glass-card margin-top" style="background:#f0f9ff; border:2px solid #0284c7;">
+                    <div class="card-header" style="padding:12px 16px; background:transparent;">
+                        <h4 style="font-size:14px; font-weight:800; color:#0f172a;"><i class="fa-solid fa-user-pen"></i> Teacher Feedback & AI Suggestion Override</h4>
+                    </div>
+                    <div class="card-body" style="padding:16px;">
+                        <textarea id="sp-modal-teacher-input" class="editor-textarea" placeholder="Add custom teacher feedback for this student or override AI recommendation..."></textarea>
+                        <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
+                            <label style="font-size:12px; font-weight:600; color:#475569; display:flex; align-items:center; gap:8px;">
+                                <input type="checkbox" id="sp-modal-override-checkbox" checked>
+                                <span>Influence & Update AI Model Suggestions for this student</span>
+                            </label>
+                            <button class="btn btn-primary" id="btn-save-sp-modal-feedback">
+                                <i class="fa-solid fa-floppy-disk"></i> Save Feedback & Influence AI
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- JS Scripts -->
     <script src="js/data.js"></script>
     <script src="js/multimodal.js"></script>
     <script src="js/gap-graph.js"></script>
     <script src="js/interventions.js"></script>
     <script src="js/teacher.js"></script>
+    <script src="js/student.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

@@ -4,30 +4,53 @@
    ---------------------------------------------------- */
 
 window.app = {
-    activeTab: 'diagnostic',
+    activeRole: 'teacher', // 'teacher' | 'student'
+    activeTab: 'teacher-notes',
     activeProfileKey: 'alex',
 
     init: function() {
-        console.log("MindGap AI Initializing...");
+        console.log("MindGap AI Dual-Interface Engine Initializing...");
         
-        MultimodalController.init();
-        GapGraphController.init();
-        InterventionsController.init();
-        TeacherDashboardController.init();
+        if (window.MultimodalController) MultimodalController.init();
+        if (window.GapGraphController) GapGraphController.init();
+        if (window.InterventionsController) InterventionsController.init();
+        if (window.TeacherDashboardController) TeacherDashboardController.init();
+        if (window.StudentPortalController) StudentPortalController.init();
 
         this.bindEvents();
+        this.switchRole('teacher');
         this.loadProfile(this.activeProfileKey);
     },
 
     bindEvents: function() {
-        // Nav tab switching
-        const navItems = document.querySelectorAll('.nav-item');
-        navItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                const targetTab = item.getAttribute('data-tab');
-                this.switchTab(targetTab);
-            });
+        // Universal Nav Tab Switching (using closest for reliable inner click handling)
+        document.addEventListener('click', (e) => {
+            const navBtn = e.target.closest('.nav-item');
+            if (navBtn) {
+                const targetTab = navBtn.getAttribute('data-tab');
+                if (targetTab) {
+                    this.switchTab(targetTab);
+                }
+            }
         });
+
+        // Role toggle buttons in sidebar
+        const btnRoleTeacher = document.getElementById('btn-role-teacher');
+        const btnRoleStudent = document.getElementById('btn-role-student');
+        const btnToggleTop = document.getElementById('btn-switch-role-toggle');
+
+        if (btnRoleTeacher) {
+            btnRoleTeacher.addEventListener('click', () => this.switchRole('teacher'));
+        }
+        if (btnRoleStudent) {
+            btnRoleStudent.addEventListener('click', () => this.switchRole('student'));
+        }
+        if (btnToggleTop) {
+            btnToggleTop.addEventListener('click', () => {
+                const nextRole = this.activeRole === 'teacher' ? 'student' : 'teacher';
+                this.switchRole(nextRole);
+            });
+        }
 
         // Profile Select dropdown
         const profileSelect = document.getElementById('profile-select');
@@ -36,29 +59,39 @@ window.app = {
                 this.loadProfile(e.target.value);
             });
         }
+    },
 
-        // Quick Scan AI button
-        const btnQuickScan = document.getElementById('btn-quick-scan');
-        if (btnQuickScan) {
-            btnQuickScan.addEventListener('click', () => {
-                this.runAIDiagnosis();
-            });
-        }
+    switchRole: function(role) {
+        this.activeRole = role;
 
-        // Reset Demo button
-        const btnResetDemo = document.getElementById('btn-reset-demo');
-        if (btnResetDemo) {
-            btnResetDemo.addEventListener('click', () => {
-                this.loadProfile(this.activeProfileKey);
-                alert("Demo state reset to original profile benchmark!");
-            });
+        const btnRoleTeacher = document.getElementById('btn-role-teacher');
+        const btnRoleStudent = document.getElementById('btn-role-student');
+        const roleBadge = document.getElementById('header-role-badge');
+
+        if (role === 'teacher') {
+            if (btnRoleTeacher) btnRoleTeacher.classList.add('active');
+            if (btnRoleStudent) btnRoleStudent.classList.remove('active');
+            if (roleBadge) {
+                roleBadge.textContent = 'Teacher';
+                roleBadge.style.color = '#0284c7';
+            }
+            this.switchTab('teacher-notes');
+        } else {
+            if (btnRoleStudent) btnRoleStudent.classList.add('active');
+            if (btnRoleTeacher) btnRoleTeacher.classList.remove('active');
+            if (roleBadge) {
+                roleBadge.textContent = 'Student';
+                roleBadge.style.color = '#7c3aed';
+            }
+            this.switchTab('student-notes');
         }
     },
 
     switchTab: function(tabName) {
+        if (!tabName) return;
         this.activeTab = tabName;
 
-        // Update nav item active state
+        // Update nav item active state across all buttons
         document.querySelectorAll('.nav-item').forEach(item => {
             if (item.getAttribute('data-tab') === tabName) {
                 item.classList.add('active');
@@ -76,192 +109,94 @@ window.app = {
             }
         });
 
-        // Tab specific triggers
-        if (tabName === 'knowledge-graph') {
-            const profile = this.getActiveProfile();
-            setTimeout(() => {
-                GapGraphController.renderGraph(profile.graphNodes, profile.graphEdges);
-            }, 100);
-        } else if (tabName === 'nuggets') {
-            const profile = this.getActiveProfile();
-            this.renderNuggetsPathway(profile);
-        } else if (tabName === 'interventions') {
-            const profile = this.getActiveProfile();
-            InterventionsController.renderInterventions(profile);
-        } else if (tabName === 'teacher-dashboard') {
-            setTimeout(() => {
-                TeacherDashboardController.renderDashboard();
-            }, 100);
-        }
-
-        // Page title updates
+        // Page title & subtitle updates
         const pageTitle = document.getElementById('page-title');
         const pageSubtitle = document.getElementById('page-subtitle');
+
         if (pageTitle && pageSubtitle) {
-            if (tabName === 'diagnostic') {
-                pageTitle.innerText = "Multimodal Assessment & Diagnostics";
-                pageSubtitle.innerText = "Analyze handwriting, voice explainers, and behavioral telemetry to detect hidden gaps";
-            } else if (tabName === 'knowledge-graph') {
-                pageTitle.innerText = "Cognitive Knowledge Dependency Graph";
-                pageSubtitle.innerText = "Interactive visual network identifying prerequisite bottlenecks and conceptual gaps";
-            } else if (tabName === 'nuggets') {
-                pageTitle.innerText = "Century AI Micro-Learning Nuggets & Neuroscience";
-                pageSubtitle.innerText = "Personalized adaptive learning pathways powered by AI, learning science, and spaced repetition";
-            } else if (tabName === 'interventions') {
-                pageTitle.innerText = "AI Targeted Interventions & Adaptive Practice";
-                pageSubtitle.innerText = "Personalized micro-remediations tailored to student's mental model errors";
-            } else if (tabName === 'teacher-dashboard') {
-                pageTitle.innerText = "Classroom Heatmap & Automated Grouping";
-                pageSubtitle.innerText = "Class-wide gap analytics and automated differentiated instruction groups";
+            switch(tabName) {
+                case 'teacher-notes':
+                    pageTitle.textContent = "Today's Notes & Content Writer";
+                    pageSubtitle.textContent = "Upload lecture slides or compose daily notes directly for students";
+                    try { if (window.TeacherDashboardController) window.TeacherDashboardController.renderTeacherNotes(); } catch(e){}
+                    break;
+                case 'student-roster':
+                    pageTitle.textContent = "Student Performance Dashboard";
+                    pageSubtitle.textContent = "Monitor student risk levels, test trends, growth timelines, and AI overrides";
+                    try { if (window.TeacherDashboardController) window.TeacherDashboardController.renderStudentRosterTable(); } catch(e){}
+                    break;
+                case 'teacher-dashboard':
+                    pageTitle.textContent = "Misconception Heatmap & Grouping";
+                    pageSubtitle.textContent = "Classroom aggregated misconception analytics and automated group instruction";
+                    try { if (window.TeacherDashboardController) window.TeacherDashboardController.renderDashboard(); } catch(e){}
+                    break;
+                case 'student-notes':
+                    pageTitle.textContent = "Today's Published Course Notes";
+                    pageSubtitle.textContent = "Read lecture materials uploaded by your instructor and start personalized assessments";
+                    try { if (window.StudentPortalController) window.StudentPortalController.renderStudentNotes(); } catch(e){}
+                    break;
+                case 'student-assessment':
+                    pageTitle.textContent = "Personalized AI Assessment Hub";
+                    pageSubtitle.textContent = "Complete MCQ tests with timers, Rapid Fire one-liners, or Live Speech think-alouds";
+                    break;
+                case 'student-performance':
+                    pageTitle.textContent = "Analyze Your Performance";
+                    pageSubtitle.textContent = "Review test score trends over time, AI feedback breakdown, and study plans";
+                    try { if (window.StudentPortalController) window.StudentPortalController.renderStudentPerformanceAnalytics(); } catch(e){}
+                    break;
+                case 'diagnostic':
+                    pageTitle.textContent = "Multimodal Assessment & Diagnostics";
+                    pageSubtitle.textContent = "Analyze handwriting, voice explainers, and behavioral telemetry to detect hidden gaps";
+                    break;
+                case 'knowledge-graph':
+                    pageTitle.textContent = "Cognitive Prerequisite Knowledge Graph";
+                    pageSubtitle.textContent = "Interactive physics-based graph rendering prerequisite dependencies and root gaps";
+                    try {
+                        if (window.GapGraphController && window.MINDGAP_DATA) {
+                            const profile = MINDGAP_DATA.profiles[this.activeProfileKey];
+                            if (profile) window.GapGraphController.renderGraph(profile.graphNodes, profile.graphEdges);
+                        }
+                    } catch(e){}
+                    break;
+                case 'nuggets':
+                    pageTitle.textContent = "Century AI Adaptive Micro-Nuggets";
+                    pageSubtitle.textContent = "Hyper-personalized 3-to-5 minute learning activities targeting identified root gaps";
+                    try {
+                        if (window.InterventionsController && window.MINDGAP_DATA) {
+                            const profile = MINDGAP_DATA.profiles[this.activeProfileKey];
+                            if (profile) window.InterventionsController.renderNuggets(profile.nuggetsPathway);
+                        }
+                    } catch(e){}
+                    break;
+                case 'interventions':
+                    pageTitle.textContent = "AI Interventions & Differentiated Remediation";
+                    pageSubtitle.textContent = "Automated intervention packages targeting prerequisite concept gaps";
+                    break;
             }
         }
     },
 
-    getActiveProfile: function() {
-        return MINDGAP_DATA.profiles[this.activeProfileKey] || MINDGAP_DATA.profiles.alex;
-    },
-
     loadProfile: function(profileKey) {
-        if (profileKey === 'custom') {
-            this.activeProfileKey = 'alex';
-            alert("Upload custom handwriting image or record audio using the input cards!");
-            return;
-        }
-
         this.activeProfileKey = profileKey;
-        const profile = this.getActiveProfile();
+        if (!window.MINDGAP_DATA || !MINDGAP_DATA.profiles) return;
+        const profile = MINDGAP_DATA.profiles[profileKey];
+        if (!profile) return;
 
-        // Update Sidebar subject tag
-        const subjectTag = document.getElementById('subject-tag');
-        if (subjectTag) subjectTag.innerText = profile.subject;
+        const tag = document.getElementById('subject-tag');
+        if (tag) tag.textContent = profile.subject;
 
-        // Update Telemetry Header
-        const telemetryScore = document.getElementById('telemetry-score');
-        if (telemetryScore) telemetryScore.innerText = profile.hesitationScore;
-
-        // Update OCR text box
-        const ocrText = document.getElementById('ocr-text');
-        if (ocrText) ocrText.innerText = profile.handwritingDetected;
-
-        // Update Audio transcript text
-        const transcriptText = document.getElementById('transcript-text');
-        if (transcriptText) transcriptText.innerText = profile.transcript;
-
-        // Update Confidence Progress bar
-        const confidenceFill = document.getElementById('confidence-fill');
-        if (confidenceFill) {
-            confidenceFill.style.width = `${profile.confidence}%`;
-            confidenceFill.innerText = `${profile.confidence}% (${profile.confidence < 40 ? 'High Hesitation' : 'Moderate Hesitation'})`;
+        if (this.activeTab === 'knowledge-graph' && window.GapGraphController) {
+            window.GapGraphController.renderGraph(profile.graphNodes, profile.graphEdges);
         }
-
-        // Update Telemetry metrics box
-        const metricTime = document.getElementById('metric-time');
-        const metricSwitches = document.getElementById('metric-switches');
-        const metricConfidence = document.getElementById('metric-confidence');
-        if (metricTime) metricTime.innerText = profile.hesitationScore;
-        if (metricSwitches) metricSwitches.innerText = `${profile.misconception.impactedCount} Revisions / Switching`;
-        if (metricConfidence) metricConfidence.innerText = `${Math.round(profile.confidence / 20)} / 5 (Uncertain)`;
-
-        // Update Diagnostic Problem & Options
-        const qText = document.getElementById('q-text');
-        const qOptions = document.getElementById('q-options');
-        if (qText && profile.question) {
-            qText.innerText = profile.question.text;
-        }
-
-        if (qOptions && profile.question) {
-            let optsHtml = '';
-            profile.question.options.forEach(opt => {
-                let cls = 'q-opt';
-                let icon = '';
-                if (opt.studentSelected) {
-                    cls += ' incorrect';
-                    icon = ' <i class="fa-solid fa-circle-xmark"></i> (Student Answer)';
-                } else if (opt.correct) {
-                    cls += ' correct';
-                    icon = ' <i class="fa-solid fa-circle-check"></i> (Correct Answer)';
-                }
-                optsHtml += `<div class="${cls}">${opt.label}${icon}</div>`;
-            });
-            qOptions.innerHTML = optsHtml;
-        }
-
-        // Update Diagnostic Result Output Panel
-        const diagTitle = document.getElementById('diag-misconception-title');
-        const diagDesc = document.getElementById('diag-misconception-desc');
-        const diagSeverity = document.getElementById('diag-severity');
-        const diagImpact = document.getElementById('diag-impact');
-
-        if (diagTitle) diagTitle.innerText = profile.misconception.title;
-        if (diagDesc) diagDesc.innerText = profile.misconception.desc;
-        if (diagSeverity) diagSeverity.innerText = profile.misconception.severity;
-        if (diagImpact) diagImpact.innerText = `${profile.misconception.impactedCount} Downstream Concepts`;
-
-        // Render Nuggets if on nuggets tab
-        this.renderNuggetsPathway(profile);
-
-        // Refresh currently active tab graphics if needed
-        if (this.activeTab === 'knowledge-graph') {
-            GapGraphController.renderGraph(profile.graphNodes, profile.graphEdges);
-        } else if (this.activeTab === 'interventions') {
-            InterventionsController.renderInterventions(profile);
-        }
-    },
-
-    renderNuggetsPathway: function(profile) {
-        const container = document.getElementById('nuggets-pathway-container');
-        if (!container) return;
-
-        const nuggets = profile.nuggetsPathway || [];
-        let html = '<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:18px;">';
-
-        nuggets.forEach(n => {
-            html += `
-                <div style="background:rgba(0,0,0,0.3); border:1px solid var(--border-card); border-radius:var(--radius-md); padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
-                    <div>
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                            <span class="badge ${n.statusClass}">${n.status}</span>
-                            <span style="font-size:12px; color:var(--text-muted);"><i class="fa-solid fa-clock"></i> ${n.duration}</span>
-                        </div>
-                        <h4 style="font-family:var(--font-heading); color:#fff; font-size:15px; margin-bottom:8px;">
-                            <i class="fa-solid ${n.icon} icon-cyan"></i> ${n.title}
-                        </h4>
-                        <p style="font-size:12px; color:var(--text-muted); line-height:1.5;">${n.summary}</p>
-                    </div>
-                    <button class="btn btn-sm btn-outline" style="margin-top:14px; width:100%; justify-content:center;" onclick="app.switchTab('interventions')">
-                        <i class="fa-solid fa-play"></i> Start Micro-Nugget
-                    </button>
-                </div>
-            `;
-        });
-
-        html += '</div>';
-        container.innerHTML = html;
-
-        // Update neuroscience metrics
-        const retentionVal = document.getElementById('retention-val');
-        const forgettingStatus = document.getElementById('forgetting-status');
-        if (retentionVal) retentionVal.innerText = `${profile.memoryRetainPercent}% (${profile.memoryRetainPercent < 50 ? 'Memory Decay Alert' : 'Good Retention'})`;
-        if (forgettingStatus) forgettingStatus.innerText = profile.forgettingCurveStatus;
-    },
-
-    runAIDiagnosis: function() {
-        const btn = document.getElementById('btn-quick-scan');
-        if (btn) {
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Analyzing Multimodal Inputs...';
-            btn.disabled = true;
-
-            setTimeout(() => {
-                btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Run AI Diagnosis';
-                btn.disabled = false;
-                alert("✨ Gemini Multimodal AI Analysis Complete! Root conceptual gap identified and Knowledge Graph updated.");
-                this.switchTab('knowledge-graph');
-            }, 1200);
+        if (this.activeTab === 'nuggets' && window.InterventionsController) {
+            window.InterventionsController.renderNuggets(profile.nuggetsPathway);
         }
     }
 };
 
-// Initialize when DOM ready
+window.AppController = window.app;
+
+// DOM Loaded Entry
 document.addEventListener('DOMContentLoaded', () => {
     window.app.init();
 });
