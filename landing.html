@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +11,9 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
@@ -341,6 +344,36 @@
             transform: scale(1.05);
         }
 
+        /* Sequential image entry for right card */
+        .seq-img-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            gap: 16px;
+            margin-top: 14px;
+            margin-bottom: 20px;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 8px;
+            min-height: 190px;
+        }
+
+        .seq-img {
+            max-height: 180px;
+            max-width: 50%;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+            filter: drop-shadow(0 6px 14px rgba(0,0,0,0.08));
+            opacity: 0;
+            transform: translateY(28px) scale(0.92);
+            transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1);
+        }
+
+        .seq-img.seq-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
         .hero-mockup-wrapper {
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
@@ -587,13 +620,27 @@
         }
 
         @keyframes blinkCursor {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
         }
 
         @keyframes bounceArrow {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(10px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(10px);
+            }
         }
 
         .dilemma-cards-grid {
@@ -627,8 +674,17 @@
             border-radius: 20px;
         }
 
-        .tag-red { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
-        .tag-blue { background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; }
+        .tag-red {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .tag-blue {
+            background: #e0f2fe;
+            color: #0284c7;
+            border: 1px solid #bae6fd;
+        }
 
         .price-tag {
             font-size: 12px;
@@ -645,8 +701,13 @@
             font-weight: 600;
         }
 
-        .text-emerald { color: #059669; }
-        .text-danger { color: #dc2626; }
+        .text-emerald {
+            color: #059669;
+        }
+
+        .text-danger {
+            color: #dc2626;
+        }
 
         .dilemma-vs {
             width: 44px;
@@ -764,6 +825,7 @@
         }
     </style>
 </head>
+
 <body class="light-landing">
 
     <!-- Bright Header Navbar -->
@@ -780,10 +842,10 @@
         </nav>
 
         <div style="display:flex; gap:12px;">
-            <a href="index.html" class="btn btn-bright-primary">
+            <a href="index.html" class="btn btn-bright-primary" style="display:flex; align-items:center; gap:8px; padding:11px 22px; font-size:14px;">
                 <i class="fa-solid fa-chalkboard-user"></i> Login as Teacher
             </a>
-            <a href="index.html" class="btn btn-bright-secondary" onclick="localStorage.setItem('mindgap_role', 'student')">
+            <a href="index.html" class="btn btn-bright-secondary" style="display:flex; align-items:center; gap:8px; padding:11px 22px; font-size:14px;">
                 <i class="fa-solid fa-user-graduate"></i> Login as Student
             </a>
         </div>
@@ -799,15 +861,17 @@
             <span class="gradient-text">Before Test Scores Drop</span>
         </h1>
         <p class="hero-subtitle">
-            MindGap AI combines <strong>Multimodal Vision & Speech AI</strong>, <strong>Learning Science</strong>, and <strong>Neuroscience</strong> to analyze student scratchpads, voice explanations, and hesitation telemetry to pinpoint root-cause prerequisite gaps.
+            MindGap AI combines <strong>Multimodal Vision & Speech AI</strong>, <strong>Learning Science</strong>, and
+            <strong>Neuroscience</strong> to analyze student scratchpads, voice explanations, and hesitation telemetry
+            to pinpoint root-cause prerequisite gaps.
         </p>
 
         <div class="hero-cta-group">
-            <a href="index.html" class="btn btn-bright-primary" style="padding:14px 28px; font-size:16px;">
-                <i class="fa-solid fa-chalkboard-user"></i> Login as Teacher Portal
+            <a href="index.html" class="btn btn-bright-primary">
+                <i class="fa-solid fa-circle-play"></i> Experience Live Multimodal Demo
             </a>
-            <a href="index.html" class="btn btn-bright-secondary" style="padding:14px 28px; font-size:16px; border:2px solid #0284c7; color:#0284c7;">
-                <i class="fa-solid fa-user-graduate"></i> Login as Student Portal
+            <a href="#features" class="btn btn-bright-secondary">
+                <i class="fa-solid fa-layer-group"></i> Explore Multimodal Features
             </a>
         </div>
 
@@ -815,11 +879,15 @@
         <div class="side-by-side-feature reveal-on-scroll">
             <div class="side-text-col">
                 <h2>Actionable Intelligence for Every Learner</h2>
-                <p>MindGap AI synthesizes visual handwriting, verbal hesitation, and quiz telemetry into instant diagnostic feedback to eliminate learning bottlenecks.</p>
+                <p>MindGap AI synthesizes visual handwriting, verbal hesitation, and quiz telemetry into instant
+                    diagnostic feedback to eliminate learning bottlenecks.</p>
                 <div class="feature-bullets">
-                    <div class="bullet-item"><i class="fa-solid fa-circle-check"></i> Step-by-Step Misconception Breakdown</div>
-                    <div class="bullet-item"><i class="fa-solid fa-circle-check"></i> Prerequisite Knowledge Dependency Graph</div>
-                    <div class="bullet-item"><i class="fa-solid fa-circle-check"></i> Automated Spaced Repetition Scheduling</div>
+                    <div class="bullet-item"><i class="fa-solid fa-circle-check"></i> Step-by-Step Misconception
+                        Breakdown</div>
+                    <div class="bullet-item"><i class="fa-solid fa-circle-check"></i> Prerequisite Knowledge Dependency
+                        Graph</div>
+                    <div class="bullet-item"><i class="fa-solid fa-circle-check"></i> Automated Spaced Repetition
+                        Scheduling</div>
                 </div>
             </div>
             <div class="side-video-col">
@@ -831,9 +899,14 @@
 
         <!-- 2. Scale of the Problem & Gap in the Middle Section -->
         <div class="problem-scale-section">
-            <div class="problem-badge reveal-on-scroll"><i class="fa-solid fa-triangle-exclamation"></i> Scale of the Problem</div>
-            <h2 class="reveal-on-scroll" style="font-family:var(--font-heading); font-size:36px; font-weight:800; color:#0f172a; margin-bottom:12px;">Invisible Gaps & The Tutoring Dilemma</h2>
-            <p class="reveal-on-scroll" style="color:#64748b; font-size:16px; max-width:680px; margin:0 auto;">Learning gaps surface only when a student fails or drops out — long after the window for early intervention has closed.</p>
+            <div class="problem-badge reveal-on-scroll"><i class="fa-solid fa-triangle-exclamation"></i> Scale of the
+                Problem</div>
+            <h2 class="reveal-on-scroll"
+                style="font-family:var(--font-heading); font-size:36px; font-weight:800; color:#0f172a; margin-bottom:12px;">
+                Invisible Gaps & The Tutoring Dilemma</h2>
+            <p class="reveal-on-scroll" style="color:#64748b; font-size:16px; max-width:680px; margin:0 auto;">Learning
+                gaps surface only when a student fails or drops out — long after the window for early intervention has
+                closed.</p>
 
             <div class="problem-grid">
                 <!-- Card 1: Scale of Problem (Sliding from Left) -->
@@ -841,21 +914,25 @@
                     <div class="problem-card-icon red-glow">
                         <i class="fa-solid fa-user-graduate" style="font-size:24px; color:#dc2626;"></i>
                     </div>
-                    <div class="problem-stat text-danger">
-                        <span class="animated-count" data-target="1.6" data-suffix=" Billion+">1.6 Billion+</span>
+                    <div class="problem-stat text-danger typewriter-title" data-typing-text="1.6 Billion+">
+                        <span class="typed-text"></span><span class="typing-cursor" style="color:#dc2626;">|</span>
                     </div>
                     <div class="problem-stat-label">Students Struggling In Digital Environments</div>
-                    
+
                     <!-- Animated Student Real Images Sliding In from Left and Right -->
                     <div class="student-illustrations-container">
-                        <img src="assets/student-female.png" alt="Struggling Student" class="student-illus-img slide-from-left">
-                        <img src="assets/student-male.webp" alt="Studying Student" class="student-illus-img slide-from-right">
+                        <img src="assets/student-female.png" alt="Struggling Student"
+                            class="student-illus-img slide-from-left">
+                        <img src="assets/student-male.webp" alt="Studying Student"
+                            class="student-illus-img slide-from-right">
                     </div>
 
                     <h3>Gaps Surface Too Late</h3>
-                    <p>We don’t really have a way to track learning gaps directly; they usually only surface when a student fails or drops out. By that point, we’ve already missed the window for early help.</p>
+                    <p>We don’t really have a way to track learning gaps directly; they usually only surface when a
+                        student fails or drops out. By that point, we’ve already missed the window for early help.</p>
                     <div class="data-unfused-bar">
-                        <span style="color:#64748b; font-weight:600;"><i class="fa-solid fa-database"></i> Attendance, Clicks & Quiz Attempts:</span>
+                        <span style="color:#64748b; font-weight:600;"><i class="fa-solid fa-database"></i> Attendance,
+                            Clicks & Quiz Attempts:</span>
                         <span class="unfused-status">Unfused Data Silos <i class="fa-solid fa-link-slash"></i></span>
                     </div>
                 </div>
@@ -865,16 +942,29 @@
                     <div class="problem-card-icon amber-glow">
                         <i class="fa-solid fa-sack-dollar"></i>
                     </div>
-                    <div class="problem-stat" style="color:#d97706;">
-                        <span class="animated-count" data-target="4000" data-prefix="$1,000 – $" data-suffix="/yr">$1,000 – $4,000/yr</span>
+                    <div class="problem-stat typewriter-title" style="color:#d97706;"
+                        data-typing-text="$1,000 to $4,000/yr">
+                        <span class="typed-text"></span><span class="typing-cursor" style="color:#d97706;">|</span>
                     </div>
                     <div class="problem-stat-label">Cost of Current Fix (Per Student / Year)</div>
+
+                    <!-- Sequential Image Entry: first appears then second -->
+                    <div class="seq-img-container" id="seq-img-container">
+                        <img src="first-removebg-preview.png" alt="Tutoring Cost" class="seq-img" id="seq-img-1">
+                        <img src="secon_d-removebg-preview.png" alt="Budget Gap" class="seq-img" id="seq-img-2">
+                    </div>
+
                     <h3>Rationed by Budget, Not Need</h3>
-                    <p>Effective 1:1 tutoring costs $1,000–$4,000 per student per year. Only ~1 in 10 public school students get it — it's rationed by school budget, not by need.</p>
+                    <p>Real 1:1 tutoring works - but it costs $1,000 to $4,000 a year per student, so only about 1 in 10
+                        students ever get it. The students who need it most often can't get it, simply because their
+                        school's budget can't afford it.</p>
                     <div class="rationed-meter">
-                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:700; margin-bottom:8px;">
-                            <span style="color:#64748b;"><i class="fa-solid fa-user-xmark"></i> Public School 1:1 Access:</span>
-                            <span style="color:#dc2626; font-weight:800;">Only <span class="animated-count" data-target="10" data-suffix="%">10%</span> Covered</span>
+                        <div
+                            style="display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:700; margin-bottom:8px;">
+                            <span style="color:#64748b;"><i class="fa-solid fa-user-xmark"></i> Public School 1:1
+                                Access:</span>
+                            <span style="color:#dc2626; font-weight:800;">Only <span class="animated-count"
+                                    data-target="10" data-suffix="%">10%</span> Covered</span>
                         </div>
                         <div class="meter-bar">
                             <div class="meter-fill" style="width: 10%;"></div>
@@ -885,8 +975,10 @@
 
             <!-- The Gap in the Middle Comparison Widget -->
             <div class="middle-gap-widget reveal-on-scroll">
-                <h3 class="middle-gap-title typewriter-title" data-typing-text="What's the Actual Problem ?"><span class="typed-text">What's the Actual Problem ?</span><span class="typing-cursor">|</span></h3>
-                <p class="middle-gap-sub">Current education tools leave students stranded between two imperfect extremes:</p>
+                <h3 class="middle-gap-title typewriter-title" data-typing-text="What's the Actual Problem ?"><span
+                        class="typed-text">What's the Actual Problem ?</span><span class="typing-cursor">|</span></h3>
+                <p class="middle-gap-sub">Current education tools leave students stranded between two imperfect
+                    extremes:</p>
 
                 <!-- THE PROBLEM LABEL -->
                 <div class="problem-solution-label label-red reveal-on-scroll">
@@ -899,8 +991,10 @@
                             <span class="dilemma-tag tag-red">Expensive 1:1 Tutoring</span>
                             <span class="price-tag">$1,000 - $4,000/yr</span>
                         </div>
-                        <div class="dilemma-status text-emerald"><i class="fa-solid fa-check-circle"></i> Works great</div>
-                        <div class="dilemma-status text-danger"><i class="fa-solid fa-times-circle"></i> Almost nobody can afford it</div>
+                        <div class="dilemma-status text-emerald"><i class="fa-solid fa-check-circle"></i> Works great
+                        </div>
+                        <div class="dilemma-status text-danger"><i class="fa-solid fa-times-circle"></i> Almost nobody
+                            can afford it</div>
                     </div>
 
                     <div class="dilemma-vs">VS</div>
@@ -910,8 +1004,10 @@
                             <span class="dilemma-tag tag-blue">Cheap Quiz Apps</span>
                             <span class="price-tag">Free / $10/mo</span>
                         </div>
-                        <div class="dilemma-status text-emerald"><i class="fa-solid fa-check-circle"></i> Affordable & Scalable</div>
-                        <div class="dilemma-status text-danger"><i class="fa-solid fa-times-circle"></i> Too shallow to find specific root cause</div>
+                        <div class="dilemma-status text-emerald"><i class="fa-solid fa-check-circle"></i> Affordable &
+                            Scalable</div>
+                        <div class="dilemma-status text-danger"><i class="fa-solid fa-times-circle"></i> Too shallow to
+                            find specific root cause</div>
                     </div>
                 </div>
 
@@ -928,9 +1024,12 @@
                 </div>
 
                 <div class="mindgap-solution-bridge reveal-on-scroll">
-                    <div class="bridge-badge"><img src="assets/logo.png" alt="Logo" style="height:26px; width:auto; border-radius:4px; vertical-align:middle; margin-right:4px;"> The MindGap AI Bridge</div>
+                    <div class="bridge-badge"><img src="assets/logo.png" alt="Logo"
+                            style="height:26px; width:auto; border-radius:4px; vertical-align:middle; margin-right:4px;">
+                        The MindGap AI Bridge</div>
                     <h4>Multimodal Root-Cause Diagnostic Engine</h4>
-                    <p>Delivers the 1:1 deep diagnostic depth of expensive human tutoring at the scalable cost of software by fusing scratchpads, speech, and telemetry.</p>
+                    <p>Delivers the 1:1 deep diagnostic depth of expensive human tutoring at the scalable cost of
+                        software by fusing scratchpads, speech, and telemetry.</p>
                 </div>
             </div>
 
@@ -972,38 +1071,52 @@
     <!-- MULTIMODAL FEATURE GRID -->
 
     <!-- MULTIMODAL FEATURE GRID -->
-    <section id="features" class="section-container reveal-on-scroll" style="background:#f8fafc; border-radius:var(--radius-lg); border:1px solid #e2e8f0; text-align:center;">
+    <section id="features" class="section-container reveal-on-scroll"
+        style="background:#f8fafc; border-radius:var(--radius-lg); border:1px solid #e2e8f0; text-align:center;">
         <div class="section-header reveal-on-scroll" style="text-align:center;">
-            <h2 class="reveal-on-scroll" style="text-align:center; font-family:var(--font-heading); font-size:36px; font-weight:800; color:#0f172a; margin-bottom:12px;">Out-of-the-Box Multimodal Channels</h2>
-            <p class="reveal-on-scroll" style="text-align:center; color:#64748b; font-size:16px; max-width:640px; margin:0 auto;">Traditional software only looks at correct vs. incorrect options. MindGap AI understands HOW students think.</p>
+            <h2 class="reveal-on-scroll"
+                style="text-align:center; font-family:var(--font-heading); font-size:36px; font-weight:800; color:#0f172a; margin-bottom:12px;">
+                Out-of-the-Box Multimodal Channels</h2>
+            <p class="reveal-on-scroll"
+                style="text-align:center; color:#64748b; font-size:16px; max-width:640px; margin:0 auto;">Most tools
+                just check if an answer is right or wrong. MindGap AI goes deeper and looks at how a student actually
+                thinks through a problem.</p>
         </div>
 
         <div class="grid-layout grid-2" style="text-align:left;">
             <div class="feature-card-light slide-from-left">
-                <h3 style="font-family:var(--font-heading); color:#0f172a; font-size:19px; font-weight:800;">Visual Scratchpad & Handwriting OCR</h3>
+                <h3 style="font-family:var(--font-heading); color:#0f172a; font-size:19px; font-weight:800;">Visual
+                    Scratchpad & Handwriting OCR</h3>
                 <p style="font-size:14px; color:#475569; line-height:1.75;">
-                    Students upload photos or use a live webcam to scan handwritten math/physics steps. Gemini Multimodal Vision highlights step-by-step calculation errors.
+                    Students can snap a photo of their working or use a webcam to submit handwritten notes. The AI reads
+                    through every step and flags exactly where the calculation went wrong.
                 </p>
             </div>
 
             <div class="feature-card-light slide-from-right">
-                <h3 style="font-family:var(--font-heading); color:#0f172a; font-size:19px; font-weight:800;">Voice "Think-Aloud" Audio Analysis</h3>
+                <h3 style="font-family:var(--font-heading); color:#0f172a; font-size:19px; font-weight:800;">Voice
+                    "Think-Aloud" Audio Analysis</h3>
                 <p style="font-size:14px; color:#475569; line-height:1.75;">
-                    Speech-to-text transcript analysis detects verbal hesitation, self-doubt, and spoken reasoning gaps during problem solving.
+                    Students talk through their reasoning out loud while solving a problem. The AI listens for moments
+                    of hesitation or uncertainty to spot where their thinking breaks down.
                 </p>
             </div>
 
             <div class="feature-card-light slide-from-left">
-                <h3 style="font-family:var(--font-heading); color:#0f172a; font-size:19px; font-weight:800;">Prerequisite Knowledge Dependency Graph</h3>
+                <h3 style="font-family:var(--font-heading); color:#0f172a; font-size:19px; font-weight:800;">
+                    Prerequisite Knowledge Dependency Graph</h3>
                 <p style="font-size:14px; color:#475569; line-height:1.75;">
-                    Interactive physics-based network graph visually isolating root conceptual bottlenecks (red nodes) from downstream blocked topics.
+                    A visual map of how concepts connect to each other. It highlights the one root gap that is blocking
+                    a student from understanding several other topics down the line.
                 </p>
             </div>
 
             <div class="feature-card-light slide-from-right">
-                <h3 style="font-family:var(--font-heading); color:#0f172a; font-size:19px; font-weight:800;">Teacher Misconception Heatmap & Grouping</h3>
+                <h3 style="font-family:var(--font-heading); color:#0f172a; font-size:19px; font-weight:800;">Teacher
+                    Misconception Heatmap & Grouping</h3>
                 <p style="font-size:14px; color:#475569; line-height:1.75;">
-                    Classroom analytics matrix that automatically groups students with identical misconceptions for targeted peer instruction.
+                    Teachers get a class-wide view showing which students share the same misunderstanding. It then
+                    groups them together so the teacher can address it in one focused session.
                 </p>
             </div>
         </div>
@@ -1035,8 +1148,12 @@
 
     <!-- CTA SECTION -->
     <section class="section-container reveal-on-scroll" style="text-align:center;">
-        <h2 class="reveal-on-scroll" style="font-family:var(--font-heading); font-size:40px; color:#0f172a; margin-bottom:16px;">Ready to Close Student Learning Gaps?</h2>
-        <p class="reveal-on-scroll" style="font-size:16px; color:#64748b; max-width:600px; margin:0 auto 32px auto;">Try the live interactive MindGap AI platform with pre-configured benchmark profiles or custom multimodal camera/voice inputs.</p>
+        <h2 class="reveal-on-scroll"
+            style="font-family:var(--font-heading); font-size:40px; color:#0f172a; margin-bottom:16px;">Ready to Close
+            Student Learning Gaps?</h2>
+        <p class="reveal-on-scroll" style="font-size:16px; color:#64748b; max-width:600px; margin:0 auto 32px auto;">Try
+            the live interactive MindGap AI platform with pre-configured benchmark profiles or custom multimodal
+            camera/voice inputs.</p>
         <a href="index.html" class="btn btn-bright-primary reveal-on-scroll" style="padding:16px 36px; font-size:18px;">
             <i class="fa-solid fa-bolt"></i> Launch Live Application Now
         </a>
@@ -1057,12 +1174,12 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const reveals = document.querySelectorAll('.reveal-on-scroll, .slide-from-left, .slide-from-right');
-            
+
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('is-visible');
-                        
+
                         const counters = entry.target.querySelectorAll('.animated-count');
                         counters.forEach(counter => animateCounter(counter));
                     }
@@ -1093,23 +1210,51 @@
 
             document.querySelectorAll('.typewriter-title').forEach(el => typewriterObserver.observe(el));
 
+            // Sequential Image Observer for right problem card
+            const seqContainer = document.getElementById('seq-img-container');
+            if (seqContainer) {
+                const seqObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img1 = document.getElementById('seq-img-1');
+                            const img2 = document.getElementById('seq-img-2');
+                            // First image appears immediately
+                            if (img1) img1.classList.add('seq-visible');
+                            // Second image appears 550ms later
+                            if (img2) setTimeout(() => img2.classList.add('seq-visible'), 550);
+                            seqObserver.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.25 });
+                seqObserver.observe(seqContainer);
+            }
+
             function startTypingAnimation(el) {
                 if (el.getAttribute('data-typed-started') === 'true') return;
                 el.setAttribute('data-typed-started', 'true');
 
                 const textToType = el.getAttribute('data-typing-text') || "What's the Actual Problem ?";
                 const targetSpan = el.querySelector('.typed-text');
+                const cursorSpan = el.querySelector('.typing-cursor');
                 if (!targetSpan) return;
 
                 targetSpan.textContent = '';
                 let index = 0;
-                const speed = 60;
+                const speed = el.classList.contains('problem-stat') ? 45 : 60;
 
                 function typeChar() {
                     if (index < textToType.length) {
                         targetSpan.textContent += textToType.charAt(index);
                         index++;
                         setTimeout(typeChar, speed);
+                    } else {
+                        if (cursorSpan && el.classList.contains('problem-stat')) {
+                            setTimeout(() => {
+                                cursorSpan.style.animation = 'none';
+                                cursorSpan.style.transition = 'opacity 0.4s';
+                                cursorSpan.style.opacity = '0';
+                            }, 700);
+                        }
                     }
                 }
                 typeChar();
@@ -1132,7 +1277,7 @@
                     const progress = Math.min(elapsed / duration, 1);
                     const easeProgress = 1 - Math.pow(1 - progress, 3);
                     const currentVal = (targetVal * easeProgress).toFixed(decimals);
-                    
+
                     el.innerText = `${prefix}${currentVal}${suffix}`;
 
                     if (progress < 1) {
@@ -1146,4 +1291,5 @@
         });
     </script>
 </body>
+
 </html>
