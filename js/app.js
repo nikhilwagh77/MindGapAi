@@ -187,19 +187,41 @@ window.app = {
 
     loadProfile: function(profileKey) {
         this.activeProfileKey = profileKey;
-        if (!window.MINDGAP_DATA || !MINDGAP_DATA.profiles) return;
-        const profile = MINDGAP_DATA.profiles[profileKey];
-        if (!profile) return;
+        if (!window.MINDGAP_DATA) return;
+
+        const profile = (MINDGAP_DATA.profiles && MINDGAP_DATA.profiles[profileKey]) || 
+                        (MINDGAP_DATA.studentRoster && MINDGAP_DATA.studentRoster.find(s => s.id === profileKey));
 
         const tag = document.getElementById('subject-tag');
-        if (tag) tag.textContent = profile.subject;
+        if (tag && profile) {
+            tag.textContent = profile.subject || profile.name;
+        }
 
-        if (this.activeTab === 'knowledge-graph' && window.GapGraphController) {
-            window.GapGraphController.renderGraph(profile.graphNodes, profile.graphEdges);
-        }
-        if (this.activeTab === 'nuggets' && window.InterventionsController) {
-            window.InterventionsController.renderNuggets(profile.nuggetsPathway);
-        }
+        // Open detailed Student Profile Modal when a student context is selected
+        try {
+            if (window.TeacherDashboardController && profileKey) {
+                TeacherDashboardController.openStudentProfileModal(profileKey);
+            }
+        } catch(e) {}
+
+        // Refresh Multimodal Diagnostics if function available
+        try {
+            if (window.MultimodalController && MultimodalController.loadProfileData) {
+                MultimodalController.loadProfileData(profileKey);
+            }
+        } catch(e) {}
+
+        try {
+            if (this.activeTab === 'knowledge-graph' && window.GapGraphController && profile && profile.graphNodes) {
+                window.GapGraphController.renderGraph(profile.graphNodes, profile.graphEdges);
+            }
+        } catch(e) {}
+
+        try {
+            if (this.activeTab === 'nuggets' && window.InterventionsController && profile && profile.nuggetsPathway) {
+                window.InterventionsController.renderNuggets(profile.nuggetsPathway);
+            }
+        } catch(e) {}
     }
 };
 
