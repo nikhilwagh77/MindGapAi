@@ -395,12 +395,17 @@ const { generateWithFallback, generateAssessmentsFromNotes, analyzeStudentAssess
 // ─────────────────────────────────────────────────────────────
 app.post('/api/ai/generate-tests', async (req, res) => {
     const { note_content, subject } = req.body;
+    console.log('📥 Assessment generation request received. Subject:', subject, 'Content length:', note_content ? note_content.length : 0);
     try {
         const contentToUse = note_content || "1D Kinematics and Vertical Projectile Motion with sign conventions. g = -9.8 m/s^2 when moving upward.";
+        console.log('⏳ Calling generateAssessmentsFromNotes...');
         const generated = await generateAssessmentsFromNotes(contentToUse, subject || 'Physics');
+        console.log('✅ Generated assessments received. Structure:', Object.keys(generated));
+        console.log('📊 Full response being sent to client:', JSON.stringify(generated).substring(0, 200) + '...');
         res.json({ success: true, tests: generated });
     } catch (e) {
-        console.error('Gemini Test Generation Error:', e.message);
+        console.error('❌ Gemini Test Generation Error:', e.message);
+        console.error('Stack:', e.stack);
         res.status(500).json({ success: false, error: e.message });
     }
 });

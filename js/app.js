@@ -11,11 +11,7 @@ window.app = {
     init: function() {
         console.log("MindGap AI Dual-Interface Engine Initializing...");
         
-        // Load custom Gemini API key if present
-        const customKeyInput = document.getElementById('custom-gemini-key-input');
-        if (customKeyInput) {
-            customKeyInput.value = localStorage.getItem('custom_gemini_api_key') || '';
-        }
+        // Custom Gemini API input removed; server will use keys from .env
 
         if (window.MultimodalController) MultimodalController.init();
         if (window.GapGraphController) GapGraphController.init();
@@ -103,13 +99,7 @@ window.app = {
             });
         }
 
-        // Custom Gemini API Key listener
-        const customKeyInput = document.getElementById('custom-gemini-key-input');
-        if (customKeyInput) {
-            customKeyInput.addEventListener('input', (e) => {
-                localStorage.setItem('custom_gemini_api_key', e.target.value.trim());
-            });
-        }
+        // client-side custom key input removed
     },
 
     switchRole: function(role) {
@@ -264,10 +254,7 @@ window.app = {
 
 window.AppController = window.app;
 
-window.getCustomGeminiKey = function() {
-    const input = document.getElementById('custom-gemini-key-input');
-    return input ? input.value.trim() : (localStorage.getItem('custom_gemini_api_key') || '');
-};
+// `getCustomGeminiKey` removed — frontend no longer supplies custom keys
 
 // DOM Loaded Entry
 document.addEventListener('DOMContentLoaded', () => {

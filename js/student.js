@@ -304,10 +304,18 @@ window.StudentPortalController = {
     /* --- PAGE 2: ASSESSMENT FLOW HUB --- */
     renderMCQTest: function() {
         const container = document.getElementById('mcq-questions-container');
-        if (!container) return;
+        if (!container) {
+            console.error('❌ MCQ container not found in DOM');
+            return;
+        }
 
+        console.log('🎯 renderMCQTest called. MINDGAP_DATA.assessmentTests:', MINDGAP_DATA.assessmentTests);
+        
         const test = MINDGAP_DATA.assessmentTests && MINDGAP_DATA.assessmentTests.mcq;
+        console.log('📋 MCQ test data:', test);
+        
         if (!test) {
+            console.log('⚠️ No MCQ test data found, showing placeholder');
             // Render placeholder card with dynamic generation trigger
             container.innerHTML = `
                 <div class="note-card" style="border: 2px dashed #bae6fd; text-align: center; padding: 32px 20px; background: linear-gradient(135deg, #f0f9ff, #faf5ff);">
@@ -326,8 +334,10 @@ window.StudentPortalController = {
             return;
         }
 
+        console.log('✅ Rendering MCQ test with', test.questions.length, 'questions');
         let html = '';
         test.questions.forEach((q, idx) => {
+            console.log(`   Question ${idx + 1}:`, q.text ? q.text.substring(0, 50) : 'No text', '- Options:', q.options ? q.options.length : 0);
             html += `
                 <div class="question-block">
                     <div class="q-title">Question ${idx + 1} of ${test.questions.length}</div>
@@ -353,6 +363,7 @@ window.StudentPortalController = {
         `;
 
         container.innerHTML = html;
+        console.log('✅ MCQ HTML rendered to container');
         this.startMCQTimer();
     },
 
@@ -396,7 +407,10 @@ window.StudentPortalController = {
                 body: JSON.stringify({ note_content: noteContent, subject: subject })
             });
             const data = await res.json();
+            console.log('📊 AI Assessment Response:', data);
+            
             if (data.success && data.tests) {
+                console.log('✅ Assessment data received and valid:', data.tests);
                 MINDGAP_DATA.assessmentTests = data.tests;
 
                 this.renderMCQTest();
@@ -404,11 +418,17 @@ window.StudentPortalController = {
                 this.renderSpeechTest();
                 console.log('✨ Gemini AI dynamically generated 3 new assessment modules from notes!');
             } else {
-                alert('Assessment generation failed. Please try again.');
+                console.error('❌ Assessment generation returned invalid response:', data);
+                alert('Assessment generation failed. Please try again. Error: ' + (data.error || 'Unknown error'));
             }
         } catch(e) {
-            console.error('Gemini test generation failed', e);
-            alert('Error connecting to assessment server. Fallback test generated.');
+            console.error('❌ Gemini test generation failed', e);
+            alert('Error connecting to assessment server. Please try again.');
+        } finally {
+            if (genBtn) {
+                genBtn.disabled = false;
+                genBtn.innerHTML = '<i class="fa-solid fa-brain"></i> Generate Assessment using AI';
+            }
         }
     },
 

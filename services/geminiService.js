@@ -5,19 +5,23 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 require('dotenv').config();
 
-// Parse all 8 Gemini API Keys from .env
+// Parse all Gemini API Keys from .env
 const rawKeys = process.env.GEMINI_KEYS || '';
 const API_KEYS = rawKeys.split(',').map(k => k.trim()).filter(Boolean);
 
 console.log(`🔑 Gemini Key Manager initialized with ${API_KEYS.length} fallback key(s).`);
 
-const MODELS = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b'];
+const DEFAULT_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-8b'];
+const configuredModel = (process.env.GEMINI_MODEL || '').trim();
+const MODELS = configuredModel
+    ? [configuredModel, ...DEFAULT_MODELS.filter(model => model !== configuredModel)]
+    : DEFAULT_MODELS;
 
 /**
  * Execute a Gemini AI prompt with automatic failover across all available API keys and supported models.
  */
-async function generateWithFallback(prompt, systemInstruction = '', isJson = false, customKey = '') {
-    const keysToTry = customKey ? [customKey, ...API_KEYS] : API_KEYS;
+async function generateWithFallback(prompt, systemInstruction = '', isJson = false /* client-supplied custom key ignored */) {
+    const keysToTry = API_KEYS;
     if (!keysToTry || keysToTry.length === 0) {
         throw new Error('No Gemini API keys found in environment configuration.');
     }
@@ -38,20 +42,36 @@ async function generateWithFallback(prompt, systemInstruction = '', isJson = fal
                 const fullPrompt = systemInstruction ? `${systemInstruction}\n\n${prompt}` : prompt;
                 const result = await model.generateContent(fullPrompt);
                 const response = await result.response;
-                const text = response.text();
+                let text = response.text();
 
-                const isCustom = customKey && i === 0;
-                console.log(`✅ Gemini AI call succeeded using ${isCustom ? 'Custom User Key' : 'Key #' + (customKey ? i : i + 1)} with model [${modelName}]`);
+                // If JSON is expected, extract JSON from markdown if present
+                if (isJson) {
+                    text = extractJsonFromResponse(text);
+                }
+
+                console.log(`✅ Gemini AI call succeeded using Key #${i+1} with model [${modelName}]`);
                 return text;
             } catch (err) {
                 lastError = err;
             }
         }
-        const isCustom = customKey && i === 0;
-        console.warn(`⚠️ Gemini ${isCustom ? 'Custom User Key' : 'Key #' + (customKey ? i : i + 1)} failed across models: ${lastError ? lastError.message : 'Error'}. Trying next fallback key...`);
+        console.warn(`⚠️ Gemini Key #${i+1} failed across models: ${lastError ? lastError.message : 'Error'}. Trying next fallback key...`);
     }
 
     throw new Error(`All ${keysToTry.length} Gemini API keys failed. Last error: ${lastError ? lastError.message : 'Unknown'}`);
+}
+
+/**
+ * Extract JSON from markdown code blocks if present
+ */
+function extractJsonFromResponse(text) {
+    // Try to extract JSON from markdown code blocks ```json ... ```
+    const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    if (jsonMatch) {
+        return jsonMatch[1].trim();
+    }
+    // If no markdown, return as-is
+    return text.trim();
 }
 
 
@@ -59,19 +79,53 @@ async function generateWithFallback(prompt, systemInstruction = '', isJson = fal
  * Generate 3 types of assessments (MCQ, Rapid Fire, Live Speech) dynamically using Gemini AI
  */
 async function generateAssessmentsFromNotes(noteContent, subject = 'General Science', customKey = '') {
-    const systemPrompt = `You are MindGap AI, an elite adaptive learning engine inspired by Century Tech (AI + Learning Science + Neuroscience). 
-Generate 3 distinct types of student assessments based on the provided lecture notes:
-1. MCQ Test: 3 multiple-choice questions with 4 options each (A, B, C, D), correctIndex (0-3), and explanation.
-2. Rapid Fire Check: 3 quick one-liner questions with prompt and expected short answer.
-3. Live Speech Think-Aloud Prompt: 1 conceptual question requiring step-by-step verbal reasoning.
+    const systemPrompt = `You are MindGap AI, an elite adaptive learning engine inspired by Century Tech (AI + Learning Science + Neuroscience).
+Generate 3 distinct types of student assessments based on the provided lecture notes.
 
-Return strict valid JSON output.`;
+YOU MUST return JSON with this EXACT structure - no variations, no arrays called "assessments":
+{
+  "mcq": {
+    "title": "string",
+    "questions": [
+      {
+        "id": "mcq-1",
+        "text": "question text",
+        "options": [
+          { "id": "opt-a", "text": "A) option text" },
+          { "id": "opt-b", "text": "B) option text" },
+          { "id": "opt-c", "text": "C) option text" },
+          { "id": "opt-d", "text": "D) option text" }
+        ],
+        "correctIndex": 0,
+        "explanation": "explanation text"
+      }
+    ]
+  },
+  "rapidFire": {
+    "title": "string",
+    "questions": [
+      {
+        "id": "rf-1",
+        "prompt": "question text",
+        "expectedAnswer": "answer text",
+        "placeholder": "hint text"
+      }
+    ]
+  },
+  "speech": {
+    "title": "string",
+    "promptQuestion": "question text"
+  }
+}`;
 
-    const userPrompt = `Lecture Notes Subject: ${subject}\n\nLecture Content:\n${noteContent}`;
+    const userPrompt = `Subject: ${subject}\n\nLecture Notes:\n${noteContent}`;
 
     try {
         const rawJson = await generateWithFallback(userPrompt, systemPrompt, true, customKey);
-        return JSON.parse(rawJson);
+        console.log('🔍 Raw Gemini Response (first 500 chars):', rawJson.substring(0, 500));
+        const parsed = JSON.parse(rawJson);
+        console.log('✅ Successfully parsed Gemini response. Keys:', Object.keys(parsed));
+        return parsed;
     } catch(err) {
         console.warn('⚠️ All Gemini API Keys hit quota limits or offline. Using MindGap AI Fallback Generator:', err.message);
         return {
