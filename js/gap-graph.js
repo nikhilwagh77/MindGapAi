@@ -8,11 +8,11 @@ window.GapGraphController = {
     nodesDataSet: null,
     edgesDataSet: null,
 
-    init: function() {
+    init: function () {
         // Render graph when container is ready
     },
 
-    renderGraph: function(graphNodes, graphEdges) {
+    renderGraph: function (graphNodes, graphEdges) {
         const container = document.getElementById('vis-knowledge-graph');
         if (!container) return;
 
@@ -98,7 +98,7 @@ window.GapGraphController = {
         }
     },
 
-    inspectNode: function(nodeId, graphNodes) {
+    inspectNode: function (nodeId, graphNodes) {
         const inspector = document.getElementById('node-inspector');
         if (!inspector) return;
 
