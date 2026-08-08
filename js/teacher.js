@@ -45,6 +45,53 @@ window.TeacherDashboardController = {
             btnSaveNote.addEventListener('click', () => this.saveNewNote());
         }
 
+        // File Upload: Show upload button when a file is selected
+        const fileInput = document.getElementById('teacher-file-input');
+        const fileStatus = document.getElementById('teacher-file-status');
+        const fileNameSpan = document.getElementById('teacher-filename');
+        const uploadBtn = document.getElementById('btn-upload-file');
+
+        if (fileInput) {
+            fileInput.addEventListener('change', () => {
+                const file = fileInput.files[0];
+                if (file) {
+                    if (fileNameSpan) fileNameSpan.textContent = file.name;
+                    if (fileStatus) fileStatus.classList.remove('hidden');
+                    if (uploadBtn) uploadBtn.style.display = 'flex';
+                }
+            });
+        }
+
+        if (uploadBtn) {
+            uploadBtn.addEventListener('click', () => {
+                const file = fileInput && fileInput.files[0];
+                if (!file) return;
+
+                // Create a note entry from the uploaded file
+                const newNote = {
+                    id: 'note-' + Date.now(),
+                    title: file.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' '),
+                    subject: 'Uploaded File',
+                    date: 'Just now',
+                    author: 'Current Teacher',
+                    content: `📎 Uploaded file: **${file.name}** (${(file.size / 1024).toFixed(1)} KB)\n\nThis document has been published to the student portal.`,
+                    tags: ['Uploaded', 'PDF']
+                };
+
+                if (!MINDGAP_DATA.teacherNotes) MINDGAP_DATA.teacherNotes = [];
+                MINDGAP_DATA.teacherNotes.unshift(newNote);
+                this.renderTeacherNotes();
+                if (window.StudentPortalController) window.StudentPortalController.renderStudentNotes();
+
+                // Reset upload zone
+                if (fileStatus) fileStatus.classList.add('hidden');
+                if (uploadBtn) uploadBtn.style.display = 'none';
+                if (fileInput) fileInput.value = '';
+
+                alert(`✅ "${file.name}" uploaded and published to student portal successfully!`);
+            });
+        }
+
         // Roster Search Input
         const searchInput = document.getElementById('roster-search-input');
         if (searchInput) {
