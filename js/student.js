@@ -19,9 +19,15 @@ window.StudentPortalController = {
     },
 
     renderCommonFeedback: function() {
+        const banner = document.getElementById('common-feedback-banner');
         const textEl = document.getElementById('common-feedback-text');
-        if (textEl && window.MINDGAP_DATA && MINDGAP_DATA.commonTeacherFeedback) {
-            textEl.textContent = MINDGAP_DATA.commonTeacherFeedback;
+        const feedback = window.MINDGAP_DATA && MINDGAP_DATA.commonTeacherFeedback;
+
+        if (feedback && feedback.trim()) {
+            if (textEl) textEl.textContent = feedback;
+            if (banner) banner.classList.remove('hidden');
+        } else {
+            if (banner) banner.classList.add('hidden');
         }
     },
 
