@@ -142,39 +142,34 @@
                         <div class="card-header">
                             <div class="card-title">
                                 <i class="fa-solid fa-cloud-arrow-up icon-cyan"></i>
-                                <h3>Upload Course Notes & Files</h3>
+                                <h3>Upload Course Notes &amp; Files</h3>
                             </div>
                             <span class="badge">PDF / Images / Text</span>
                         </div>
                         <div class="card-body">
                             <!-- Hidden real file input -->
-                            <input type="file" id="teacher-file-input" accept=".pdf,.txt,image/*" style="display:none;">
+                            <input type="file" id="teacher-file-input" accept=".pdf,.txt,.doc,.docx,image/*" style="display:none;">
 
-                            <!-- Drop zone styled with label for reliable click -->
-                            <div class="upload-zone" id="teacher-note-upload-zone" style="cursor:pointer; text-align:center; padding:28px 16px;" onclick="document.getElementById('teacher-file-input').click()">
-                                <i class="fa-solid fa-file-arrow-up" style="font-size:36px; color:#0284c7; margin-bottom:10px; display:block;"></i>
-                                <p style="font-size:13px; color:#64748b; margin-bottom:12px;">Click to browse or drag & drop lecture slides, PDF notes, or textbook scans</p>
-                                <span class="badge" style="font-size:12px; padding:6px 16px; background:#e0f2fe; color:#0284c7; border:1px solid #bae6fd; cursor:pointer;">
+                            <!-- Entire zone is a label → clicking anywhere opens file picker -->
+                            <label for="teacher-file-input" id="teacher-note-upload-zone" class="upload-zone" style="cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:32px 16px; border:2px dashed #cbd5e1; border-radius:12px; background:#f8fafc; transition:all 0.2s;">
+                                <i class="fa-solid fa-file-arrow-up" style="font-size:36px; color:#0284c7;"></i>
+                                <p style="color:#64748b; font-size:13px; text-align:center; margin:0;">Click anywhere here to upload lecture slides, PDF notes, or textbook scans</p>
+                                <span class="btn btn-sm btn-outline" style="pointer-events:none;">
                                     <i class="fa-solid fa-folder-open"></i> Browse Files
                                 </span>
+                                <p style="font-size:11px; color:#94a3b8; margin:0;">Supports: PDF, TXT, DOC, JPG, PNG</p>
+                            </label>
+
+                            <!-- File status after selection -->
+                            <div id="teacher-file-status" style="display:none; margin-top:12px; padding:10px 14px; background:#f0f9ff; border:1.5px solid #0284c7; border-radius:8px; color:#0284c7; font-size:13px; font-weight:600;">
+                                <i class="fa-solid fa-check-circle"></i> File selected: <span id="teacher-filename"></span>
+                                <span id="teacher-file-size" style="font-weight:400; color:#64748b; margin-left:8px;"></span>
                             </div>
 
-                            <!-- File preview + upload button, shown after file selected -->
-                            <div id="teacher-file-preview" style="display:none; margin-top:12px; background:#f0fdf4; border:1.5px solid #86efac; border-radius:10px; padding:12px 14px;">
-                                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                                    <i class="fa-solid fa-file-circle-check" style="color:#16a34a; font-size:20px;"></i>
-                                    <div>
-                                        <div id="teacher-filename" style="font-weight:700; font-size:13px; color:#166534;"></div>
-                                        <div id="teacher-filesize" style="font-size:11px; color:#64748b;"></div>
-                                    </div>
-                                    <button type="button" onclick="document.getElementById('teacher-file-input').value=''; document.getElementById('teacher-file-preview').style.display='none';" style="margin-left:auto; background:none; border:none; color:#dc2626; font-size:16px; cursor:pointer;" title="Remove file">
-                                        <i class="fa-solid fa-times-circle"></i>
-                                    </button>
-                                </div>
-                                <button type="button" class="btn btn-primary" id="btn-upload-file" style="width:100%; justify-content:center;">
-                                    <i class="fa-solid fa-cloud-arrow-up"></i> Upload & Publish to Students
-                                </button>
-                            </div>
+                            <!-- Upload button — appears after file is chosen -->
+                            <button class="btn btn-primary" id="btn-upload-file" style="width:100%; justify-content:center; margin-top:10px; display:none;">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Upload &amp; Publish to Students
+                            </button>
                         </div>
                     </div>
 
