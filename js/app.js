@@ -11,6 +11,12 @@ window.app = {
     init: function() {
         console.log("MindGap AI Dual-Interface Engine Initializing...");
         
+        // Load custom Gemini API key if present
+        const customKeyInput = document.getElementById('custom-gemini-key-input');
+        if (customKeyInput) {
+            customKeyInput.value = localStorage.getItem('custom_gemini_api_key') || '';
+        }
+
         if (window.MultimodalController) MultimodalController.init();
         if (window.GapGraphController) GapGraphController.init();
         if (window.InterventionsController) InterventionsController.init();
@@ -94,6 +100,14 @@ window.app = {
         if (profileSelect) {
             profileSelect.addEventListener('change', (e) => {
                 this.loadProfile(e.target.value);
+            });
+        }
+
+        // Custom Gemini API Key listener
+        const customKeyInput = document.getElementById('custom-gemini-key-input');
+        if (customKeyInput) {
+            customKeyInput.addEventListener('input', (e) => {
+                localStorage.setItem('custom_gemini_api_key', e.target.value.trim());
             });
         }
     },
@@ -249,6 +263,11 @@ window.app = {
 };
 
 window.AppController = window.app;
+
+window.getCustomGeminiKey = function() {
+    const input = document.getElementById('custom-gemini-key-input');
+    return input ? input.value.trim() : (localStorage.getItem('custom_gemini_api_key') || '');
+};
 
 // DOM Loaded Entry
 document.addEventListener('DOMContentLoaded', () => {

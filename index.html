@@ -49,6 +49,13 @@
                 </div>
             </div>
 
+            <!-- Custom Gemini API Key Settings -->
+            <div class="role-selector-box" style="margin-top: 10px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 10px;">
+                <label style="font-size:12px; font-weight:600; color:#334155;"><i class="fa-solid fa-key" style="color:#7c3aed;"></i> Custom Gemini API Key:</label>
+                <input type="password" id="custom-gemini-key-input" style="padding:8px 10px; font-size:12px; border-radius:8px; width:100%; border:1px solid #cbd5e1; margin-top:6px;" placeholder="Paste API Key here...">
+                <div style="font-size:10px; color:#64748b; margin-top:4px; font-weight:500;">If left blank, server fallback keys will be used.</div>
+            </div>
+
             <!-- TEACHER NAVIGATION LINKS -->
             <div class="role-section-teacher">
                 <div class="nav-section-label" style="color:#0284c7;"><i class="fa-solid fa-chalkboard-user"></i> TEACHER PORTAL</div>
@@ -576,7 +583,7 @@
                                     <button class="btn-close" id="btn-clear-image"><i class="fa-solid fa-xmark"></i></button>
                                 </div>
                             </div>
-                            
+
                             <div class="ocr-extracted-box" id="ocr-extracted-box">
                                 <div class="box-label"><i class="fa-solid fa-magnifying-glass"></i> AI Detected Work Steps:</div>
                                 <div class="ocr-text" id="ocr-text">
@@ -584,7 +591,13 @@
                                     t = 20 / 9.8 = 2.04 s <br>
                                     h = ut + 0.5at² → h = 20(2.04) + 9.8(2.04)² <span class="text-danger">&larr; [Sign Error]</span>
                                 </div>
+                                <button class="btn btn-sm btn-outline" id="btn-analyze-ocr-text" style="margin-top:10px; width:100%;">
+                                    <i class="fa-brands fa-google"></i> Analyze with Gemini
+                                </button>
                             </div>
+
+                            <!-- Gemini Image Analysis Panel -->
+                            <div class="gemini-input-panel hidden" id="gemini-image-panel"></div>
                         </div>
                     </div>
 
@@ -595,9 +608,15 @@
                                 <i class="fa-solid fa-microphone icon-purple"></i>
                                 <h3>2. Voice "Think-Aloud" Audio</h3>
                             </div>
-                            <span class="badge badge-purple">Audio AI</span>
+                            <span class="badge badge-purple">Live STT + AI</span>
                         </div>
                         <div class="card-body">
+                            <!-- Speech Prompt -->
+                            <div style="background:rgba(124,58,237,0.07); border-left:3px solid #7c3aed; border-radius:8px; padding:10px 14px; margin-bottom:14px; font-size:13px; color:#334155;">
+                                <strong><i class="fa-solid fa-circle-question" style="color:#7c3aed"></i> Speak about:</strong>
+                                <span id="speech-prompt-question">Explain step-by-step how you calculate maximum height of a projectile launched at 20 m/s upward.</span>
+                            </div>
+
                             <div class="audio-recorder-box">
                                 <div class="mic-visualizer" id="mic-visualizer">
                                     <div class="wave-bar"></div>
@@ -610,21 +629,31 @@
                                     <button class="btn btn-circle btn-danger" id="btn-record-audio">
                                         <i class="fa-solid fa-microphone"></i>
                                     </button>
-                                    <div class="record-status" id="record-status">Click to record student explaining solution...</div>
+                                    <div class="record-status" id="record-status">Click microphone to begin live transcription...</div>
                                 </div>
                                 <audio id="audio-player" controls class="audio-player hidden"></audio>
                             </div>
 
+                            <!-- Live Word-by-Word Transcript -->
                             <div class="transcript-box">
-                                <div class="box-label"><i class="fa-solid fa-quote-left"></i> Speech Transcript & Hesitation Analysis:</div>
-                                <p class="transcript-text" id="transcript-text">
-                                    "I calculated the time to max height okay... then I used the second kinematics formula. But wait... is gravity negative when calculating height or positive? I... I just added them together."
-                                </p>
-                                <div class="sentiment-bar">
-                                    <span class="label">Verbal Confidence:</span>
-                                    <div class="progress-bar"><div class="progress-fill warning" id="confidence-fill" style="width: 38%;">38% (High Hesitation)</div></div>
+                                <div class="box-label">
+                                    <i class="fa-solid fa-quote-left"></i> Live Speech Transcript
+                                    <span class="live-indicator" id="live-indicator" style="display:none"><span class="live-dot"></span> LIVE</span>
+                                </div>
+                                <!-- Legacy hidden element for compatibility -->
+                                <p class="transcript-text hidden" id="transcript-text"></p>
+                                <!-- New live word display -->
+                                <div class="live-transcript-container" id="live-transcript-words">
+                                    <span class="transcript-placeholder">Your spoken words will appear here in real-time as you speak...</span>
+                                </div>
+                                <div class="sentiment-bar" style="margin-top:10px;">
+                                    <span class="label">Verbal Fluency:</span>
+                                    <div class="progress-bar"><div class="progress-fill warning" id="confidence-fill" style="width:38%">38%</div></div>
                                 </div>
                             </div>
+
+                            <!-- Gemini Speech Analysis Panel -->
+                            <div class="gemini-input-panel hidden" id="gemini-speech-panel"></div>
                         </div>
                     </div>
 
@@ -702,8 +731,19 @@
                             </div>
                         </div>
                     </div>
+                <!-- Unified Report Trigger -->
+                <div style="text-align:center; margin-top:28px; margin-bottom:20px;">
+                    <button class="btn btn-primary" id="btn-run-unified-report" style="padding:14px 36px; font-size:15px; background:linear-gradient(135deg,#7c3aed,#0284c7); border:none; border-radius:14px; letter-spacing:0.5px;">
+                        <i class="fa-brands fa-google"></i>&nbsp; Run Full Gemini Unified Analysis
+                    </button>
+                    <p style="font-size:12px; color:#64748b; margin-top:8px;">Synthesizes text, speech &amp; handwriting into one diagnostic report</p>
                 </div>
-            </section>
+
+                <!-- Unified Gemini Report Panel -->
+                <div id="unified-report-panel" class="hidden" style="margin-top:8px;"></div>
+
+                </div><!-- end highlight-card -->
+            </section><!-- end tab-diagnostic -->
 
             <!-- TAB 2: KNOWLEDGE GRAPH -->
             <section id="tab-knowledge-graph" class="tab-content">
@@ -1125,6 +1165,36 @@
                 </span>
                 <button class="btn btn-secondary" id="btn-close-note-reader-footer">
                     <i class="fa-solid fa-xmark"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STUDENT TEST RESULTS & GEMINI REPORT MODAL -->
+    <div class="modal-overlay hidden" id="modal-assessment-report">
+        <div class="modal-card modal-card-lg">
+            <div class="modal-header" style="background:#f8fafc; border-bottom:1px solid #e2e8f0; padding:16px 20px;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg, #7c3aed, #0284c7); display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px;">
+                        <i class="fa-solid fa-square-poll-vertical"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin:0; font-size:16px; color:#0f172a;">Personalized Diagnostics Report</h3>
+                        <span style="font-size:12px; color:#64748b;">Powered by Gemini AI</span>
+                    </div>
+                </div>
+                <button class="btn-close" id="btn-close-assessment-report" onclick="document.getElementById('modal-assessment-report').classList.add('hidden')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body" style="padding:24px; text-align:left; max-height:75vh; overflow-y:auto; background:#fff;">
+                <div id="assessment-report-content">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+            <div class="modal-footer" style="background:#f8fafc; border-top:1px solid #e2e8f0; padding:14px 20px; justify-content:flex-end;">
+                <button class="btn btn-secondary" onclick="document.getElementById('modal-assessment-report').classList.add('hidden')">
+                    Close Report
                 </button>
             </div>
         </div>

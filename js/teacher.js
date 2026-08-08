@@ -286,6 +286,10 @@ window.TeacherDashboardController = {
         if (!MINDGAP_DATA.teacherNotes) MINDGAP_DATA.teacherNotes = [];
         MINDGAP_DATA.teacherNotes.unshift(newNote);
 
+        // Expose note content globally for speech analysis context
+        window.currentNoteContent = noteContent;
+        window.currentNoteSubject = noteSubject;
+
         titleInput.value = '';
         contentInput.value = '';
 
@@ -293,6 +297,11 @@ window.TeacherDashboardController = {
         // Also update student notes view if function exists
         if (window.StudentPortalController) {
             window.StudentPortalController.renderStudentNotes();
+        }
+
+        // Run Gemini text analysis on the note content
+        if (window.MultimodalController && noteContent.length > 20) {
+            window.MultimodalController.runTextAnalysis(noteContent, noteSubject);
         }
 
         alert('Note published and persisted to database successfully!');

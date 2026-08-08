@@ -410,72 +410,7 @@ Remember to isolate $\\frac{dy}{dx}$ when working with implicit curves like $x^2
     ],
 
     // Student Assessment Modules
-    assessmentTests: {
-        mcq: {
-            title: 'MCQ Diagnostic Test: Kinematics & Motion',
-            durationMinutes: 5,
-            questions: [
-                {
-                    id: 'mcq-1',
-                    text: 'A ball is thrown vertically upwards with a velocity of 20 m/s. What is its acceleration at the highest point of its motion? (g = 9.8 m/s²)',
-                    options: [
-                        { id: 'opt-a', text: 'A) 0 m/s²', correct: false },
-                        { id: 'opt-b', text: 'B) 9.8 m/s² downwards', correct: true },
-                        { id: 'opt-c', text: 'C) 20 m/s² upwards', correct: false },
-                        { id: 'opt-d', text: 'D) 9.8 m/s² upwards', correct: false }
-                    ]
-                },
-                {
-                    id: 'mcq-2',
-                    text: 'Which equation correctly represents displacement s under constant acceleration a?',
-                    options: [
-                        { id: 'opt-a2', text: 'A) s = vt + at²', correct: false },
-                        { id: 'opt-b2', text: 'B) s = ut + 0.5at²', correct: true },
-                        { id: 'opt-c2', text: 'C) s = (u + v)t²', correct: false },
-                        { id: 'opt-d2', text: 'D) s = u² + 2as', correct: false }
-                    ]
-                },
-                {
-                    id: 'mcq-3',
-                    text: 'When calculating vertical displacement during upward deceleration, why is acceleration taken as -g?',
-                    options: [
-                        { id: 'opt-a3', text: 'A) Because speed is increasing', correct: false },
-                        { id: 'opt-b3', text: 'B) Because gravity opposes upward motion direction', correct: true },
-                        { id: 'opt-c3', text: 'C) Gravity is always positive in vectors', correct: false },
-                        { id: 'opt-d3', text: 'D) Velocity becomes infinite at the apex', correct: false }
-                    ]
-                }
-            ]
-        },
-        rapidFire: {
-            title: 'Rapid Fire: Instant One-Line Physics Check',
-            questions: [
-                {
-                    id: 'rf-1',
-                    prompt: 'What is the velocity of a projectile at its maximum height apex?',
-                    expectedAnswer: '0 m/s',
-                    placeholder: 'Type your short answer...'
-                },
-                {
-                    id: 'rf-2',
-                    prompt: 'State the SI unit for acceleration.',
-                    expectedAnswer: 'm/s²',
-                    placeholder: 'e.g. m/s²'
-                },
-                {
-                    id: 'rf-3',
-                    prompt: 'If displacement is constant over time, what is the velocity?',
-                    expectedAnswer: '0 (Zero)',
-                    placeholder: 'Type answer...'
-                }
-            ]
-        },
-        speech: {
-            title: 'Live Speech "Think-Aloud" Assessment',
-            promptQuestion: 'Explain step-by-step how you would calculate the time taken for an object launched upward at 20 m/s to reach maximum height.',
-            guidelines: 'Click Record, speak your reasoning aloud for 15-30 seconds, and click Submit.'
-        }
-    },
+    assessmentTests: null,
 
     // Student Analytics & Improvement Data
     studentAnalytics: {

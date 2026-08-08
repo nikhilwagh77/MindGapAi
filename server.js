@@ -387,7 +387,8 @@ app.get('/api/diagnostics/:student_id', async (req, res) => {
     } catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 
-const { generateWithFallback, generateAssessmentsFromNotes, analyzeStudentAssessment } = require('./services/geminiService');
+const { generateWithFallback, generateAssessmentsFromNotes, analyzeStudentAssessment,
+        analyzeTextInput, analyzeSpeechTranscript, analyzeImageOCR, generateUnifiedReport, evaluateFullTest } = require('./services/geminiService');
 
 // ─────────────────────────────────────────────────────────────
 // GEMINI AI INTEGRATION (3 Assessment Types + AI Diagnostics + Fallback Pool)
@@ -456,6 +457,100 @@ app.post('/api/ai/analyze-assessment', async (req, res) => {
         res.status(500).json({ success: false, error: e.message });
     }
 });
+
+// ─────────────────────────────────────────────────────────────
+// GEMINI PER-INPUT ANALYSIS ENDPOINTS
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * Analyze text input (PDF extract / composed notes)
+ */
+app.post('/api/ai/analyze-text', async (req, res) => {
+    const { text, subject } = req.body;
+    if (!text || text.trim().length < 10) {
+        return res.status(400).json({ success: false, error: 'Text content too short for analysis.' });
+    }
+    try {
+        const analysis = await analyzeTextInput(text, subject || 'General');
+        res.json({ success: true, analysis });
+    } catch (e) {
+        console.error('Text analysis error:', e.message);
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
+
+/**
+ * Analyze live speech transcript
+ */
+app.post('/api/ai/analyze-speech', async (req, res) => {
+    const { transcript, question, noteContext, subject } = req.body;
+    if (!transcript || transcript.trim().length < 5) {
+        return res.status(400).json({ success: false, error: 'Transcript too short for analysis.' });
+    }
+    try {
+        const analysis = await analyzeSpeechTranscript(transcript, question || '', noteContext || '');
+        res.json({ success: true, analysis });
+    } catch (e) {
+        console.error('Speech analysis error:', e.message);
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
+
+/**
+ * Analyze OCR text extracted from image/handwriting
+ */
+app.post('/api/ai/analyze-image-ocr', async (req, res) => {
+    const { ocrText, subject } = req.body;
+    if (!ocrText || ocrText.trim().length < 5) {
+        return res.status(400).json({ success: false, error: 'OCR text too short for analysis.' });
+    }
+    try {
+        const analysis = await analyzeImageOCR(ocrText, subject || 'Mathematics');
+        res.json({ success: true, analysis });
+    } catch (e) {
+        console.error('Image OCR analysis error:', e.message);
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
+
+/**
+ * Generate unified final report from all three modality analyses
+ */
+app.post('/api/ai/unified-report', async (req, res) => {
+    const { textAnalysis, speechAnalysis, imageAnalysis, subject } = req.body;
+    try {
+        const report = await generateUnifiedReport(
+            textAnalysis || {},
+            speechAnalysis || {},
+            imageAnalysis || {},
+            subject || 'General'
+        );
+        res.json({ success: true, report });
+    } catch (e) {
+        console.error('Unified report error:', e.message);
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
+
+/**
+ * Evaluate student's full test responses (MCQ, Rapid Fire, and Speech combined)
+ */
+app.post('/api/ai/evaluate-full-test', async (req, res) => {
+    const { mcqData, rfData, speechData, noteContent } = req.body;
+    try {
+        const result = await evaluateFullTest(
+            mcqData || [],
+            rfData || [],
+            speechData || '',
+            noteContent || ''
+        );
+        res.json({ success: true, evaluation: result });
+    } catch (e) {
+        console.error('Evaluate full test error:', e.message);
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
+
 
 // ─────────────────────────────────────────────────────────────
 // FALLBACK
