@@ -260,6 +260,9 @@ window.MINDGAP_DATA = {
             }
         }
     },
+    // Class-wide Common Feedback from Teacher
+    commonTeacherFeedback: "📢 Please review coordinate sign conventions in 1D kinematics equations before tomorrow's assessment. Remember: gravity acts downward (-9.8 m/s²) during vertical apex deceleration!",
+
     // Teacher Uploaded Notes & Content Library
     teacherNotes: [
         {

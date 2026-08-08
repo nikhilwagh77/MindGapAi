@@ -18,6 +18,27 @@ window.TeacherDashboardController = {
     },
 
     bindEvents: function() {
+        // Broadcast Common Feedback Button
+        const btnBroadcast = document.getElementById('btn-broadcast-feedback');
+        if (btnBroadcast) {
+            btnBroadcast.addEventListener('click', () => {
+                const input = document.getElementById('common-feedback-input');
+                if (!input || !input.value.trim()) {
+                    alert('Please enter common feedback or an announcement before broadcasting.');
+                    return;
+                }
+                const text = input.value.trim();
+                MINDGAP_DATA.commonTeacherFeedback = text;
+
+                if (window.StudentPortalController) {
+                    window.StudentPortalController.renderCommonFeedback();
+                }
+
+                alert('📢 Common feedback broadcasted to all students successfully!');
+                input.value = '';
+            });
+        }
+
         // Save note button
         const btnSaveNote = document.getElementById('btn-save-note');
         if (btnSaveNote) {

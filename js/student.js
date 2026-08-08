@@ -13,8 +13,16 @@ window.StudentPortalController = {
     init: function() {
         this.bindEvents();
         this.renderStudentNotes();
+        this.renderCommonFeedback();
         this.renderMCQTest();
         this.renderRapidFireTest();
+    },
+
+    renderCommonFeedback: function() {
+        const textEl = document.getElementById('common-feedback-text');
+        if (textEl && window.MINDGAP_DATA && MINDGAP_DATA.commonTeacherFeedback) {
+            textEl.textContent = MINDGAP_DATA.commonTeacherFeedback;
+        }
     },
 
     bindEvents: function() {
